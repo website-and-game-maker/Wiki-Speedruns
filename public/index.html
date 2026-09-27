@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WikiSpeedruns — race through Wikipedia</title>
+  <meta name="description" content="Race from one Wikipedia article to another using only links, then compare your route with every shortest path from Six Degrees of Wikipedia.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="WikiSpeedruns">
+  <meta property="og:title" content="WikiSpeedruns">
+  <meta property="og:description" content="Race through Wikipedia. Daily challenge, leaderboards, and a built-in Six Degrees of Wikipedia.">
+  <meta property="og:image" content="https://wiki-speedruns.web.app/icons/icon-512.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><img src="icons/icon.svg" alt=""><span>Wiki<b>Speedruns</b></span></a>
+    <nav class="nav">
+      <a href="#/" data-nav="home">Play</a>
+      <a href="#/six-degrees" data-nav="six">Six Degrees</a>
+      <a href="#/leaderboard" data-nav="lb">Leaderboard</a>
+      <a href="#/history" data-nav="history">My runs</a>
+      <a href="#/about" data-nav="about">About</a>
+    </nav>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="theme-btn" title="Toggle dark mode">🌙</button>
+    <button class="acct-btn signed-out" id="acct-btn">Sign in</button>
+  </header>
+  <main id="view"></main>
+  <nav class="bottom-nav">
+    <a href="#/" data-nav="home"><span>🏠</span>Home</a>
+    <a href="#/play?mode=daily" data-nav="play"><span>📅</span>Daily</a>
+    <a href="#/six-degrees" data-nav="six"><span>🔭</span>Explore</a>
+    <a href="#/leaderboard" data-nav="lb"><span>🏆</span>Ranks</a>
+    <a href="#/history" data-nav="history"><span>📜</span>Runs</a>
+  </nav>
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+  <noscript><p style="padding:20px">WikiSpeedruns needs JavaScript.</p></noscript>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/wiki.js"></script>
+  <script src="js/sdow.js"></script>
+  <script src="js/articles.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

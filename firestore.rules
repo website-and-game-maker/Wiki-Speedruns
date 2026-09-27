@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// users/{uid}                    public profile (leaderboard name + avatar)
+// users/{uid}/runs/{runId}       private run history
+// daily/{date}/entries/{uid}     one entry per player per daily challenge (first attempt only)
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function validName(n) {
+      return n is string && n.size() > 0 && n.size() <= 32;
+    }
+    function optionalString(d, k) {
+      return !(k in d) || d[k] == null || d[k] is string;
+    }
+
+    match /users/{uid} {
+      allow read: if true;
+      allow create, update: if isOwner(uid)
+        && validName(request.resource.data.displayName)
+        && optionalString(request.resource.data, 'photoURL');
+      allow delete: if false;
+
+      match /runs/{runId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.id == runId
+          && request.resource.data.clicks is int
+          && request.resource.data.timeMs is int
+          && request.resource.data.path is list
+          && request.resource.data.path.size() <= 1000;
+      }
+    }
+
+    match /daily/{date}/entries/{uid} {
+      allow read: if true;
+      // Create-only: the first attempt of the day is the one that counts.
+      allow create: if isOwner(uid)
+        && date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.uid == uid
+        && validName(request.resource.data.displayName)
+        && request.resource.data.finished is bool
+        && request.resource.data.path is list
+        && request.resource.data.path.size() <= 500
+        && (
+          !request.resource.data.finished
+          || (request.resource.data.clicks is int
+              && request.resource.data.clicks >= 1
+              && request.resource.data.clicks <= 10000
+              && request.resource.data.timeMs is int
+              && request.resource.data.timeMs >= 500
+              && request.resource.data.timeMs <= 86400000)
+        );
+      allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "WikiSpeedruns",
+  "short_name": "WikiSpeedruns",
+  "description": "Race through Wikipedia, then compare your route with Six Degrees of Wikipedia.",
+  "id": "/",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f5f8",
+  "theme_color": "#3a63f0",
+  "categories": ["games", "education"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Daily Challenge", "url": "./#/play?mode=daily" },
+    { "name": "Six Degrees explorer", "url": "./#/six-degrees" }
+  ]
+}

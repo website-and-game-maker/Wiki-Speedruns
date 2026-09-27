@@ -1,0 +1,44 @@
+name: Test & deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - run: npm run build
+      - run: for f in public/js/*.js; do node --check "$f"; done
+
+  deploy:
+    # Needs the FIREBASE_SERVICE_ACCOUNT repo secret (see README). Skipped until it exists.
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      HAS_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run build
+      - name: Deploy (live on main, preview channel on PRs)
+        if: env.HAS_SA == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: wiki-speedruns
+          channelId: ${{ github.event_name == 'push' && 'live' || '' }}
+      - name: Deploy Firestore rules & indexes
+        if: env.HAS_SA == 'true' && github.event_name == 'push'
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$RUNNER_TEMP/sa.json"
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx --yes firebase-tools deploy --only firestore --project wiki-speedruns --non-interactive

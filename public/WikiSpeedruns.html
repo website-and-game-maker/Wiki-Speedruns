@@ -1,0 +1,3869 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- WikiSpeedruns single-file build. Online version: https://wiki-speedruns.web.app -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WikiSpeedruns — race through Wikipedia</title>
+  <meta name="description" content="Race from one Wikipedia article to another using only links, then compare your route with every shortest path from Six Degrees of Wikipedia.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="WikiSpeedruns">
+  <meta property="og:title" content="WikiSpeedruns">
+  <meta property="og:description" content="Race through Wikipedia. Daily challenge, leaderboards, and a built-in Six Degrees of Wikipedia.">
+  <meta property="og:image" content="https://wiki-speedruns.web.app/icons/icon-512.png">
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzYTYzZjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmY2YTFhIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNnKSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMzUyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSwgJ1RpbWVzIE5ldyBSb21hbicsIHNlcmlmIiBmb250LXNpemU9IjMwMCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiI+VzwvdGV4dD4KICA8cGF0aCBkPSJNMzE4IDE0MiBMNDE4IDE0MiBMMzgwIDI1NiBMNDMwIDI1NiBMMzMwIDQwMCBMMzUyIDI5MCBMMzAwIDI5MCBaIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMxNjE4MWQiIHN0cm9rZS13aWR0aD0iMTAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" type="image/svg+xml">
+  <style>
+/* ============ Tokens ============ */
+:root {
+  --bg: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f5;
+  --surface-3: #e3e7ef;
+  --text: #16181d;
+  --muted: #5d6573;
+  --border: #d9dde5;
+  --accent: #3a63f0;
+  --accent-ink: #ffffff;
+  --accent-soft: #e5ebff;
+  --hot: #ff6a1a;
+  --hot-soft: #fff0e6;
+  --good: #16955a;
+  --good-soft: #e3f6ec;
+  --warn: #c98a00;
+  --warn-soft: #fff5d9;
+  --bad: #d23f3f;
+  --bad-soft: #fde8e8;
+  --link: #3366cc;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 12px 40px rgba(16, 24, 40, 0.18);
+  --radius: 14px;
+  --serif: 'Linux Libertine', 'Georgia', 'Times New Roman', serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f1115;
+    --surface: #171a21;
+    --surface-2: #1e222b;
+    --surface-3: #272c37;
+    --text: #e8eaef;
+    --muted: #9aa3b2;
+    --border: #2d3340;
+    --accent: #6d8dff;
+    --accent-ink: #0b0d12;
+    --accent-soft: #1d2542;
+    --hot: #ff8a45;
+    --hot-soft: #3a2415;
+    --good: #3ecf8e;
+    --good-soft: #13301f;
+    --warn: #f0b429;
+    --warn-soft: #3a2f10;
+    --bad: #ff6b6b;
+    --bad-soft: #3a1717;
+    --link: #8fb0ff;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --surface-3: #272c37;
+  --text: #e8eaef;
+  --muted: #9aa3b2;
+  --border: #2d3340;
+  --accent: #6d8dff;
+  --accent-ink: #0b0d12;
+  --accent-soft: #1d2542;
+  --hot: #ff8a45;
+  --hot-soft: #3a2415;
+  --good: #3ecf8e;
+  --good-soft: #13301f;
+  --warn: #f0b429;
+  --warn-soft: #3a2f10;
+  --bad: #ff6b6b;
+  --bad-soft: #3a1717;
+  --link: #8fb0ff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+/* ============ Base ============ */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: var(--link); }
+button, input, select { font: inherit; color: inherit; }
+img { max-width: 100%; }
+h1, h2, h3 { line-height: 1.2; }
+.serif { font-family: var(--serif); }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.tiny { font-size: 0.78rem; }
+.hidden { display: none !important; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.center { text-align: center; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ============ Top bar ============ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px max(16px, env(safe-area-inset-left));
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+  white-space: nowrap;
+}
+.brand img { width: 30px; height: 30px; }
+.brand b { color: var(--hot); font-weight: 700; }
+.nav { display: flex; gap: 2px; margin-left: 12px; }
+.nav a {
+  padding: 7px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+.nav a:hover { background: var(--surface-2); color: var(--text); }
+.nav a.active { background: var(--accent-soft); color: var(--accent); }
+.bottom-nav { display: none; }
+@media (max-width: 760px) {
+  .nav { display: none; }
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--muted);
+  }
+  .bottom-nav a span { font-size: 1.25rem; line-height: 1; }
+  .bottom-nav a.active { color: var(--accent); }
+  body.has-bottom-nav main { padding-bottom: 84px; }
+  body.in-game .bottom-nav { display: none; }
+}
+
+/* ============ Buttons & inputs ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.06s ease, background 0.15s ease, border-color 0.15s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover { background: var(--surface-2); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, black); }
+.btn-hot { background: var(--hot); border-color: var(--hot); color: #fff; }
+.btn-hot:hover { background: color-mix(in srgb, var(--hot) 88%, black); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn-lg { padding: 14px 22px; font-size: 1.08rem; border-radius: 12px; }
+.btn-sm { padding: 6px 10px; font-size: 0.85rem; border-radius: 8px; }
+.btn-block { width: 100%; }
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+.icon-btn:hover { background: var(--surface-2); }
+.input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+label.field { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.seg {
+  display: inline-flex;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.seg button {
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+/* ============ Layout ============ */
+main { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+.card h2 { margin: 0 0 12px; font-size: 1.15rem; }
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.section-title { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 0 0 10px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.pill-hot { background: var(--hot-soft); color: var(--hot); }
+.pill-good { background: var(--good-soft); color: var(--good); }
+.pill-accent { background: var(--accent-soft); color: var(--accent); }
+.pill-warn { background: var(--warn-soft); color: var(--warn); }
+.pill-bad { background: var(--bad-soft); color: var(--bad); }
+
+/* ============ Home ============ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 36px 28px;
+  background:
+    radial-gradient(1200px 400px at 110% -10%, color-mix(in srgb, var(--hot) 28%, transparent), transparent 60%),
+    radial-gradient(900px 400px at -10% 120%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
+    var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.hero h1 { font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.2rem); margin: 0 0 8px; letter-spacing: -0.01em; }
+.hero p { margin: 0 0 20px; color: var(--muted); font-size: 1.08rem; max-width: 620px; }
+.daily {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin: 18px 0 20px;
+}
+@media (max-width: 640px) {
+  .daily { grid-template-columns: 1fr; }
+  .daily .arrow { transform: rotate(90deg); justify-self: center; }
+}
+.daily .arrow { align-self: center; font-size: 1.6rem; color: var(--hot); font-weight: 800; }
+
+.page-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.page-card .thumb {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: var(--surface-3) center/cover no-repeat;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  color: var(--muted);
+}
+.page-card .meta { min-width: 0; }
+.page-card .title { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; }
+.page-card .desc { color: var(--muted); font-size: 0.85rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.page-card .label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.page-card.big { padding: 16px; }
+.page-card.big .thumb { width: 84px; height: 84px; }
+.page-card.big .title { font-size: 1.35rem; }
+.page-card.target { border-color: color-mix(in srgb, var(--hot) 50%, var(--border)); background: var(--hot-soft); }
+
+.mode-card { display: flex; flex-direction: column; gap: 10px; }
+.mode-card .emoji { font-size: 1.8rem; }
+.mode-card h3 { margin: 0; font-size: 1.1rem; }
+.mode-card p { margin: 0; color: var(--muted); font-size: 0.92rem; flex: 1; }
+
+/* ============ Autocomplete ============ */
+.ac { position: relative; }
+.ac-list {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.ac-item { display: flex; gap: 10px; align-items: center; padding: 8px 10px; cursor: pointer; }
+.ac-item.on, .ac-item:hover { background: var(--accent-soft); }
+.ac-item .thumb { width: 36px; height: 36px; border-radius: 8px; background: var(--surface-3) center/cover; flex: 0 0 auto; display: grid; place-items: center; color: var(--muted); }
+.ac-item .t { font-weight: 600; }
+.ac-item .d { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ac-item > div { min-width: 0; }
+
+/* ============ Game HUD ============ */
+body.in-game .topbar { display: none; }
+body.in-game main { max-width: none; padding: 0; }
+.hud {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top);
+}
+.hud-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.hud-target {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px 5px 5px;
+  border-radius: 10px;
+  background: var(--hot-soft);
+  border: 1px solid color-mix(in srgb, var(--hot) 35%, transparent);
+  cursor: pointer;
+  text-align: left;
+}
+.hud-target .thumb { width: 32px; height: 32px; border-radius: 7px; background: var(--surface-3) center/cover; flex: 0 0 auto; display: grid; place-items: center; color: var(--muted); }
+.hud-target .lbl { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; color: var(--hot); text-transform: uppercase; line-height: 1; }
+.hud-target .t { font-family: var(--serif); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.25; }
+.hud-target > div { min-width: 0; }
+.hud-stat { text-align: center; min-width: 58px; }
+.hud-stat .v { font-family: var(--mono); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.hud-stat .k { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+.hud-crumbs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  overflow-x: auto;
+  padding: 0 12px 8px;
+  max-width: 1120px;
+  margin: 0 auto;
+  scrollbar-width: none;
+  font-size: 0.8rem;
+}
+.hud-crumbs::-webkit-scrollbar { display: none; }
+.crumb { white-space: nowrap; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.crumb.cur { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.crumb.back { text-decoration: line-through; opacity: 0.6; }
+.crumb-sep { color: var(--muted); opacity: 0.6; }
+.loadbar { position: absolute; left: 0; bottom: -1px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--hot)); transition: width 0.25s ease; }
+.loadbar.on { width: 70%; transition: width 3s cubic-bezier(0.1, 0.7, 0.2, 1); }
+.loadbar.done { width: 100%; opacity: 0; transition: width 0.15s, opacity 0.4s 0.15s; }
+@media (max-width: 560px) {
+  .hud-main { gap: 4px; padding: 6px 8px; }
+  .hud-stat { min-width: 44px; }
+  .hud-stat .v { font-size: 1rem; }
+  .hide-sm { display: none; }
+}
+
+.article-wrap { max-width: 980px; margin: 0 auto; padding: 18px 18px 120px; }
+.article-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 6px 0 4px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.redirect-note { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+
+.hint-box {
+  position: fixed;
+  z-index: 45;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  max-width: 340px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 0.92rem;
+}
+
+/* ============ Results ============ */
+.win-banner { text-align: center; padding: 28px 16px 8px; }
+.win-banner .big { font-size: 3rem; line-height: 1; }
+.win-banner h1 { font-family: var(--serif); margin: 10px 0 4px; font-size: clamp(1.8rem, 5vw, 2.6rem); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 18px 0; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+.stat .v { font-size: 1.7rem; font-weight: 800; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stat .sub { font-size: 0.8rem; color: var(--muted); }
+.stat.good .v { color: var(--good); }
+.stat.hot .v { color: var(--hot); }
+
+.route { list-style: none; margin: 0; padding: 0; position: relative; }
+.route li { position: relative; padding: 0 0 14px 40px; }
+.route li::before { content: ''; position: absolute; left: 15px; top: 30px; bottom: -2px; width: 2px; background: var(--border); }
+.route li:last-child::before { display: none; }
+.route .dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-family: var(--mono);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+}
+.route .dot.closer { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.route .dot.same { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+.route .dot.further { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.route .dot.done { background: var(--hot); border-color: var(--hot); color: #fff; }
+.route .step-title { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; padding-top: 4px; }
+.route .step-title a { color: inherit; text-decoration: none; }
+.route .step-title a:hover { text-decoration: underline; }
+.route .step-note { font-size: 0.83rem; color: var(--muted); }
+.route .step-note b { color: var(--text); }
+.route .back-tag { font-size: 0.7rem; font-weight: 800; color: var(--muted); background: var(--surface-2); padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+.paths-list { display: grid; gap: 10px; }
+.path-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.path-row .n { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); width: 26px; }
+.path-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  max-width: 100%;
+}
+.path-node .thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-3) center/cover; flex: 0 0 auto; display: grid; place-items: center; font-size: 0.7rem; color: var(--muted); }
+.path-node span.t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.path-node.visited { border-color: var(--good); background: var(--good-soft); }
+.path-node.endpoint { border-color: color-mix(in srgb, var(--hot) 60%, transparent); }
+.path-arrow { color: var(--muted); font-weight: 700; }
+
+.share-box { font-family: var(--mono); white-space: pre-wrap; background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 0.9rem; }
+
+/* ============ Graph ============ */
+.graph-wrap { overflow: auto; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); -webkit-overflow-scrolling: touch; }
+.graph-wrap svg { display: block; margin: 0 auto; }
+.g-edge { fill: none; stroke: var(--border); stroke-width: 1.6; transition: stroke 0.15s, opacity 0.15s; }
+.g-edge.hl { stroke: var(--accent); stroke-width: 2.4; }
+.g-edge.mine { stroke: var(--good); stroke-width: 2.6; }
+.g-node rect { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; transition: fill 0.15s, stroke 0.15s; }
+.g-node text { fill: var(--text); font: 600 12px var(--sans); pointer-events: none; }
+.g-node { cursor: pointer; }
+.g-node.endpoint rect { fill: var(--hot-soft); stroke: var(--hot); stroke-width: 2; }
+.g-node.mine rect { fill: var(--good-soft); stroke: var(--good); stroke-width: 2; }
+.g-node.hl rect { stroke: var(--accent); stroke-width: 2.2; }
+.g-dim .g-edge:not(.hl) { opacity: 0.25; }
+.g-dim .g-node:not(.hl) { opacity: 0.45; }
+.g-layer-label { fill: var(--muted); font: 800 10px var(--sans); letter-spacing: 0.08em; }
+
+/* ============ Six Degrees tool ============ */
+.sd-form { display: grid; grid-template-columns: 1fr auto 1fr auto; gap: 10px; align-items: end; }
+@media (max-width: 760px) {
+  .sd-form { grid-template-columns: 1fr; }
+  .sd-form .swap { justify-self: center; transform: rotate(90deg); }
+}
+.progress { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.progress > div { height: 100%; background: linear-gradient(90deg, var(--accent), var(--hot)); width: 30%; animation: indet 1.2s ease-in-out infinite; border-radius: 999px; }
+@keyframes indet { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+.sd-headline { font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 1.6rem); margin: 0; }
+.sd-headline b { color: var(--hot); }
+
+/* ============ Tables / lists ============ */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+.table th { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+.table tr.me td { background: var(--accent-soft); }
+.table td.num, .table th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft) center/cover; display: inline-grid; place-items: center; font-weight: 800; font-size: 0.8rem; color: var(--accent); vertical-align: middle; flex: 0 0 auto; }
+.rank { font-weight: 800; font-family: var(--mono); }
+.run-item { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border); background: var(--surface); }
+.run-item:hover { border-color: var(--accent); }
+.run-item .route-t { font-family: var(--serif); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.run-item > div { min-width: 0; }
+.empty { text-align: center; color: var(--muted); padding: 40px 16px; }
+.empty .e { font-size: 2.4rem; }
+
+/* ============ Account ============ */
+.acct-btn { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+.acct-btn.signed-out { padding: 7px 14px; }
+.divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.8rem; margin: 14px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ============ Modal & toast ============ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 12, 18, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.modal-backdrop.show { opacity: 1; }
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.2s;
+}
+.modal-wide { max-width: 720px; }
+.modal-backdrop.show .modal { transform: none; }
+.modal h2 { margin: 0 0 6px; font-family: var(--serif); }
+.modal-x { position: absolute; top: 10px; right: 10px; }
+#toast-root { position: fixed; z-index: 200; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: grid; gap: 8px; pointer-events: none; width: max-content; max-width: calc(100vw - 32px); }
+.toast { background: #1b1f27; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow-lg); font-weight: 600; font-size: 0.92rem; opacity: 0; transform: translateY(8px); transition: all 0.25s; }
+.toast.show { opacity: 1; transform: none; }
+.toast-good { background: var(--good); }
+.toast-bad { background: var(--bad); }
+
+.spinner { width: 18px; height: 18px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.skeleton { background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2)); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 8px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 150; }
+.prose { max-width: 760px; }
+.prose h2 { font-family: var(--serif); margin-top: 28px; }
+.prose li { margin: 4px 0; }
+kbd { font-family: var(--mono); font-size: 0.8em; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface-2); }
+
+</style>
+  <style>
+/* Styling for article HTML rendered by the MediaWiki parser, scoped to .wiki */
+.wiki { font-family: var(--sans); font-size: 1rem; line-height: 1.65; color: var(--text); overflow-wrap: break-word; }
+.wiki p { margin: 0.5em 0 0.9em; }
+.wiki h2, .wiki .mw-heading2 h2 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin: 1.4em 0 0.5em; }
+.wiki h3 { font-size: 1.2rem; margin: 1.2em 0 0.4em; }
+.wiki h4, .wiki h5, .wiki h6 { font-size: 1rem; margin: 1em 0 0.3em; }
+.wiki .mw-heading { margin: 0; }
+.wiki ul, .wiki ol { padding-left: 1.6em; margin: 0.3em 0 0.8em; }
+.wiki li { margin: 0.15em 0; }
+.wiki dl { margin: 0.3em 0 0.8em; }
+.wiki dd { margin-left: 1.6em; }
+.wiki blockquote { margin: 1em 0; padding: 0 1em; border-left: 3px solid var(--border); color: var(--muted); }
+.wiki sup, .wiki sub { line-height: 1; }
+.wiki img { height: auto; vertical-align: middle; }
+.wiki pre, .wiki code { font-family: var(--mono); font-size: 0.88em; background: var(--surface-2); border-radius: 4px; }
+.wiki pre { padding: 10px 12px; overflow-x: auto; }
+.wiki code { padding: 1px 4px; }
+.wiki hr { border: 0; border-top: 1px solid var(--border); }
+
+/* Links: playable ones are loud, everything else is inert. */
+.wiki a.ws-link { color: var(--link); text-decoration: none; border-radius: 3px; cursor: pointer; }
+.wiki a.ws-link:hover { text-decoration: underline; background: var(--accent-soft); }
+.wiki a.ws-link.ws-target { color: var(--hot); font-weight: 700; }
+.wiki a.ws-dead { color: inherit; text-decoration: none; cursor: default; pointer-events: none; }
+.wiki a.ws-anchor { color: var(--link); text-decoration: none; }
+.wiki a.ws-hint { outline: 3px solid var(--hot); outline-offset: 2px; background: var(--hot-soft); animation: pulse 1.2s ease-in-out 3; }
+@keyframes pulse { 50% { outline-color: transparent; } }
+.wiki.ws-no-refs sup.reference { display: none; }
+
+/* Infobox & thumbnails */
+.wiki .infobox, .wiki .infobox_v2, .wiki .infobox_v3 {
+  float: right;
+  clear: right;
+  margin: 0 0 1em 1.2em;
+  width: 22em;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.wiki .infobox th, .wiki .infobox td { padding: 3px 6px; vertical-align: top; text-align: left; border: 0; }
+.wiki .infobox .infobox-above, .wiki .infobox caption { font-size: 1.15rem; font-weight: 700; text-align: center; padding: 6px; }
+.wiki .infobox .infobox-image, .wiki .infobox .infobox-full-data { text-align: center; }
+.wiki .infobox .infobox-header { text-align: center; background: var(--surface-3); }
+.wiki figure, .wiki .thumb {
+  margin: 0.4em 0 1em 1.2em;
+  float: right;
+  clear: right;
+  max-width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 6px;
+}
+.wiki figure.mw-halign-left, .wiki .tleft { float: left; clear: left; margin: 0.4em 1.2em 1em 0; }
+.wiki figure.mw-halign-center, .wiki figure.mw-halign-none { float: none; margin: 0.5em auto; display: table; }
+.wiki figure[typeof~='mw:File'] > a, .wiki figure[typeof~='mw:File/Thumb'] > a, .wiki figure[typeof~='mw:File/Frame'] > a { display: block; }
+.wiki figcaption, .wiki .thumbcaption { font-size: 0.82rem; line-height: 1.4; padding: 4px 2px 0; color: var(--muted); }
+.wiki .gallery { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+.wiki .gallerybox { list-style: none; width: auto !important; }
+.wiki .gallerytext { font-size: 0.8rem; color: var(--muted); }
+@media (max-width: 640px) {
+  .wiki .infobox, .wiki .infobox_v2, .wiki .infobox_v3, .wiki figure, .wiki .thumb { float: none; margin: 0.6em auto 1em; width: 100% !important; }
+  .wiki figure img { max-width: 100%; height: auto; }
+}
+
+/* Tables */
+.wiki table { max-width: 100%; }
+.wiki .wikitable { border-collapse: collapse; margin: 1em 0; background: var(--surface); border: 1px solid var(--border); font-size: 0.9rem; display: block; overflow-x: auto; }
+.wiki .wikitable th, .wiki .wikitable td { border: 1px solid var(--border); padding: 5px 8px; }
+.wiki .wikitable th { background: var(--surface-2); }
+
+/* Hatnotes, notices, quotes */
+.wiki .hatnote, .wiki .dablink { font-style: italic; color: var(--muted); padding-left: 1.6em; margin-bottom: 0.6em; font-size: 0.92rem; }
+.wiki .ambox, .wiki .ombox, .wiki .tmbox, .wiki .cmbox, .wiki .fmbox, .wiki .mbox-small { border: 1px solid var(--border); border-left: 6px solid var(--warn); background: var(--surface-2); margin: 0.5em 0; font-size: 0.86rem; }
+.wiki .ambox td { padding: 4px 8px; }
+.wiki .mbox-image { display: none; }
+.wiki .side-box, .wiki .sistersitebox { display: none; }
+.wiki .quotebox { float: right; margin: 0.5em 0 0.8em 1.2em; padding: 8px 10px; border: 1px solid var(--border); background: var(--surface-2); max-width: 100%; }
+
+/* Navboxes (bottom-of-page link lists: great for speedrunning) */
+.wiki .navbox { border: 1px solid var(--border); width: 100%; margin: 1em 0 0; font-size: 0.85rem; background: var(--surface); border-collapse: collapse; }
+.wiki .navbox table { width: 100%; border-collapse: collapse; }
+.wiki .navbox-title, .wiki .navbox .navbox-title { background: var(--accent-soft); text-align: center; padding: 4px 8px; font-weight: 700; }
+.wiki .navbox-group, .wiki .navbox-abovebelow { background: var(--surface-2); padding: 3px 8px; font-weight: 700; text-align: right; white-space: nowrap; }
+.wiki .navbox-list { padding: 3px 8px; border-left: 2px solid var(--bg); }
+.wiki .navbox-even { background: var(--surface-2); }
+.wiki .navbox-list ul, .wiki .hlist ul { padding: 0; margin: 0; }
+.wiki .hlist li, .wiki .hlist dd, .wiki .hlist dt { display: inline; margin: 0; }
+.wiki .hlist li:not(:last-child)::after, .wiki .hlist dd:not(:last-child)::after { content: ' · '; font-weight: 700; }
+.wiki .navbox-image { padding-left: 8px; }
+.wiki .navbar, .wiki .mw-collapsible-toggle, .wiki .navbox .navbar { display: none; }
+.wiki .reflist, .wiki .refbegin { font-size: 0.85rem; }
+.wiki .reflist ol, .wiki ol.references { padding-left: 2em; }
+.wiki .references li { margin-bottom: 0.2em; }
+.wiki .mw-references-columns, .wiki .reflist-columns { column-width: 30em; }
+.wiki .portalbox, .wiki .noprint.portal, .wiki #coordinates, .wiki .mw-editsection, .wiki .mw-empty-elt, .wiki .metadata.plainlinks.navbox-inner, .wiki .authority-control { display: none; }
+.wiki .toc, .wiki #toc { display: none; }
+.wiki .clear, .wiki .clearfix { clear: both; }
+.wiki .nowrap { white-space: nowrap; }
+.wiki .plainlist ul { list-style: none; padding-left: 0; }
+.wiki .sidebar { float: right; clear: right; margin: 0 0 1em 1.2em; width: 20em; max-width: 100%; border: 1px solid var(--border); background: var(--surface-2); font-size: 0.85rem; }
+.wiki .sidebar td, .wiki .sidebar th { padding: 2px 6px; text-align: center; }
+.wiki .multiple-image, .wiki .tmulti { max-width: 100%; }
+@media (max-width: 640px) {
+  .wiki .sidebar, .wiki .quotebox { float: none; width: 100% !important; margin: 0.6em 0; }
+  .wiki .navbox-group { white-space: normal; text-align: left; }
+}
+
+/* Dark mode: Wikipedia templates hardcode light backgrounds inline. Tame them. */
+:root[data-theme='dark'] .wiki [style*='background'],
+:root[data-theme='dark'] .wiki .infobox [style*='background'] { background-color: var(--surface-3) !important; background-image: none !important; color: var(--text) !important; }
+:root[data-theme='dark'] .wiki [style*='color:'] { color: var(--text) !important; }
+:root[data-theme='dark'] .wiki img:not([src*='.jpg']):not([src*='.JPG']):not([src*='.jpeg']):not([src*='.png']) { filter: invert(0.9) hue-rotate(180deg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .wiki [style*='background'] { background-color: var(--surface-3) !important; background-image: none !important; color: var(--text) !important; }
+  :root:not([data-theme='light']) .wiki [style*='color:'] { color: var(--text) !important; }
+  :root:not([data-theme='light']) .wiki img:not([src*='.jpg']):not([src*='.JPG']):not([src*='.jpeg']):not([src*='.png']) { filter: invert(0.9) hue-rotate(180deg); }
+}
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzYTYzZjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmY2YTFhIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNnKSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMzUyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSwgJ1RpbWVzIE5ldyBSb21hbicsIHNlcmlmIiBmb250LXNpemU9IjMwMCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiI+VzwvdGV4dD4KICA8cGF0aCBkPSJNMzE4IDE0MiBMNDE4IDE0MiBMMzgwIDI1NiBMNDMwIDI1NiBMMzMwIDQwMCBMMzUyIDI5MCBMMzAwIDI5MCBaIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMxNjE4MWQiIHN0cm9rZS13aWR0aD0iMTAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""><span>Wiki<b>Speedruns</b></span></a>
+    <nav class="nav">
+      <a href="#/" data-nav="home">Play</a>
+      <a href="#/six-degrees" data-nav="six">Six Degrees</a>
+      <a href="#/leaderboard" data-nav="lb">Leaderboard</a>
+      <a href="#/history" data-nav="history">My runs</a>
+      <a href="#/about" data-nav="about">About</a>
+    </nav>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="theme-btn" title="Toggle dark mode">🌙</button>
+    <button class="acct-btn signed-out" id="acct-btn">Sign in</button>
+  </header>
+  <main id="view"></main>
+  <nav class="bottom-nav">
+    <a href="#/" data-nav="home"><span>🏠</span>Home</a>
+    <a href="#/play?mode=daily" data-nav="play"><span>📅</span>Daily</a>
+    <a href="#/six-degrees" data-nav="six"><span>🔭</span>Explore</a>
+    <a href="#/leaderboard" data-nav="lb"><span>🏆</span>Ranks</a>
+    <a href="#/history" data-nav="history"><span>📜</span>Runs</a>
+  </nav>
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+  <noscript><p style="padding:20px">WikiSpeedruns needs JavaScript.</p></noscript>
+  <script>
+/* Firebase web config.
+ *
+ * On Firebase Hosting (wiki-speedruns.web.app) you can leave this as null: the app reads
+ * the config automatically from /__/firebase/init.json.
+ *
+ * Anywhere else (local dev, the single-file HTML download, another host), paste the config
+ * from Firebase console → Project settings → Your apps → Web app. These values are public
+ * identifiers, not secrets; access is enforced by firestore.rules.
+ */
+window.WS_FIREBASE_CONFIG = null;
+// window.WS_FIREBASE_CONFIG = {
+//   apiKey: '...',
+//   authDomain: 'wiki-speedruns.firebaseapp.com',
+//   projectId: 'wiki-speedruns',
+//   storageBucket: 'wiki-speedruns.appspot.com',
+//   messagingSenderId: '...',
+//   appId: '...',
+// };
+
+</script>
+  <script>
+/* Shared helpers. Everything hangs off the global `WS` namespace so the app
+ * runs from plain <script> tags — no build step, works from file:// too. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = (WS.util = {});
+
+  const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  U.esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
+
+  U.$ = (sel, el = document) => el.querySelector(sel);
+  U.$$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
+  U.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  /** "Albert_einstein" -> "Albert einstein" -> "Albert einstein" (first letter upper, like MediaWiki). */
+  U.normTitle = (t) => {
+    t = String(t ?? '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+    return t ? t[0].toUpperCase() + t.slice(1) : t;
+  };
+  U.wikiUrl = (title) => 'https://en.wikipedia.org/wiki/' + encodeURIComponent(String(title).replace(/ /g, '_'));
+
+  /** 83456 -> "1:23.4" ; 3723456 -> "1:02:03" */
+  U.fmtTime = (ms, tenths = true) => {
+    if (ms == null || !isFinite(ms)) return '–';
+    const total = Math.max(0, ms) / 1000;
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = Math.floor(total % 60);
+    const t = Math.floor((total * 10) % 10);
+    const ss = String(s).padStart(2, '0');
+    if (h) return `${h}:${String(m).padStart(2, '0')}:${ss}`;
+    return tenths ? `${m}:${ss}.${t}` : `${m}:${ss}`;
+  };
+
+  U.plural = (n, word, pl) => `${n} ${n === 1 ? word : pl || word + 's'}`;
+
+  U.relTime = (ts) => {
+    const d = (Date.now() - ts) / 1000;
+    if (d < 60) return 'just now';
+    if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+    if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+    if (d < 86400 * 7) return `${Math.floor(d / 86400)}d ago`;
+    return new Date(ts).toLocaleDateString();
+  };
+
+  /** Deterministic 32-bit string hash (cyrb53, truncated) and PRNG, for the daily challenge. */
+  U.hash = (str, seed = 0) => {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0) ^ (h1 >>> 0);
+  };
+  U.rng = (seed) => {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  /** Daily challenges roll over at 00:00 UTC so everyone worldwide plays the same pair. */
+  U.todayKey = (d = new Date()) => d.toISOString().slice(0, 10);
+  U.DAILY_EPOCH = '2026-09-27';
+  U.dailyNumber = (key) => Math.round((Date.parse(key) - Date.parse(U.DAILY_EPOCH)) / 86400000) + 1;
+
+  U.id = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+  /** Run `fn` over `items` with at most `limit` in flight. `shouldStop()` halts scheduling early. */
+  U.pool = async (items, limit, fn, { signal, shouldStop } = {}) => {
+    let i = 0;
+    const worker = async () => {
+      while (i < items.length) {
+        if (signal && signal.aborted) throw signal.reason || new DOMException('Aborted', 'AbortError');
+        if (shouldStop && shouldStop()) return;
+        const idx = i++;
+        await fn(items[idx], idx);
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  };
+
+  U.debounce = (fn, ms) => {
+    let t;
+    return (...a) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...a), ms);
+    };
+  };
+
+  /** localStorage that never throws (private mode, blocked storage, file://). */
+  U.store = {
+    get(key, fallback) {
+      try {
+        const v = localStorage.getItem('ws.' + key);
+        return v == null ? fallback : JSON.parse(v);
+      } catch (e) {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        localStorage.setItem('ws.' + key, JSON.stringify(value));
+      } catch (e) { /* ignore */ }
+    },
+  };
+
+  U.copy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e2) { /* ignore */ }
+      ta.remove();
+      return ok;
+    }
+  };
+
+  U.toast = (msg, kind = 'info', ms = 3200) => {
+    const rootEl = document.getElementById('toast-root');
+    if (!rootEl) return;
+    const el = document.createElement('div');
+    el.className = `toast toast-${kind}`;
+    el.textContent = msg;
+    rootEl.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 300);
+    }, ms);
+  };
+
+  /** Minimal modal. Returns {el, close}. `onClose` fires once. */
+  U.modal = (html, { onClose, wide } = {}) => {
+    const rootEl = document.getElementById('modal-root');
+    const wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.innerHTML = `<div class="modal ${wide ? 'modal-wide' : ''}" role="dialog" aria-modal="true">
+      <button class="modal-x icon-btn" aria-label="Close">✕</button>${html}</div>`;
+    rootEl.appendChild(wrap);
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      wrap.classList.remove('show');
+      document.removeEventListener('keydown', onKey);
+      setTimeout(() => wrap.remove(), 200);
+      onClose && onClose();
+    };
+    const onKey = (e) => e.key === 'Escape' && close();
+    document.addEventListener('keydown', onKey);
+    wrap.addEventListener('mousedown', (e) => e.target === wrap && close());
+    wrap.querySelector('.modal-x').addEventListener('click', close);
+    requestAnimationFrame(() => wrap.classList.add('show'));
+    return { el: wrap.querySelector('.modal'), close };
+  };
+
+  U.isStandalone = () =>
+    (root.matchMedia && root.matchMedia('(display-mode: standalone)').matches) || root.navigator?.standalone === true;
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = WS;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>
+/* Wikipedia (MediaWiki Action API) client: article rendering, search, page info,
+ * and the raw link queries the live Six Degrees engine is built on. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const API = 'https://en.wikipedia.org/w/api.php';
+  const HEADERS = { 'Api-User-Agent': 'WikiSpeedruns/1.0 (https://wiki-speedruns.web.app)' };
+
+  const W = (WS.wiki = { requests: 0 });
+
+  /** GET the Action API with retry on 429/5xx. Always formatversion=2 and anonymous CORS. */
+  W.api = async (params, { signal, retries = 4 } = {}) => {
+    const qs = new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params });
+    const url = `${API}?${qs}`;
+    for (let attempt = 0; ; attempt++) {
+      W.requests++;
+      let res;
+      try {
+        res = await fetch(url, { headers: HEADERS, signal });
+      } catch (e) {
+        if (e.name === 'AbortError' || attempt >= retries) throw e;
+        await U.sleep(500 * 2 ** attempt);
+        continue;
+      }
+      if (res.status === 429 || res.status >= 500) {
+        if (attempt >= retries) throw new Error(`Wikipedia is busy (HTTP ${res.status}). Try again in a moment.`);
+        const ra = Number(res.headers.get('retry-after'));
+        await U.sleep(ra ? ra * 1000 : 800 * 2 ** attempt);
+        continue;
+      }
+      const data = await res.json();
+      if (data.error) {
+        if (data.error.code === 'maxlag' && attempt < retries) {
+          await U.sleep(1000 * 2 ** attempt);
+          continue;
+        }
+        const err = new Error(data.error.info || data.error.code);
+        err.code = data.error.code;
+        throw err;
+      }
+      return data;
+    }
+  };
+
+  /** Follows `continue` blocks, calling onPage(data) for each response. Stops after maxRequests. */
+  W.apiAll = async (params, onPage, { signal, maxRequests = 50 } = {}) => {
+    let cont = {};
+    let n = 0;
+    for (;;) {
+      const data = await W.api({ ...params, ...cont }, { signal });
+      n++;
+      onPage(data);
+      if (!data.continue) return { complete: true, requests: n };
+      if (n >= maxRequests) return { complete: false, requests: n };
+      cont = data.continue;
+    }
+  };
+
+  // ---------- Article rendering ----------
+
+  const articleCache = new Map();
+
+  /** Rendered article HTML + canonical title (redirects followed). */
+  W.article = async (title, { signal } = {}) => {
+    const key = U.normTitle(title);
+    if (articleCache.has(key)) return articleCache.get(key);
+    const data = await W.api(
+      {
+        action: 'parse',
+        page: key,
+        redirects: '1',
+        prop: 'text|displaytitle',
+        disableeditsection: '1',
+        disablelimitreport: '1',
+      },
+      { signal }
+    );
+    const p = data.parse;
+    const result = {
+      title: p.title,
+      displayTitle: p.displaytitle || p.title,
+      pageid: p.pageid,
+      html: p.text,
+      redirectedFrom: p.redirects && p.redirects.length ? p.redirects[0].from : null,
+    };
+    articleCache.set(key, result);
+    articleCache.set(result.title, result);
+    if (articleCache.size > 80) articleCache.delete(articleCache.keys().next().value);
+    return result;
+  };
+
+  // ---------- Page info (description, thumbnail, extract) ----------
+
+  const infoCache = new Map();
+
+  /** Map<inputTitle, {title, description, extract, thumb, missing}> for up to any number of titles. */
+  W.pageInfo = async (titles, { signal, extract = false, thumbSize = 160 } = {}) => {
+    const out = new Map();
+    const need = [];
+    for (const t of titles) {
+      const k = U.normTitle(t);
+      const c = infoCache.get(k + (extract ? '|x' : ''));
+      if (c) out.set(t, c);
+      else need.push(t);
+    }
+    // TextExtracts only allows 20 intro extracts per request.
+    const batch = extract ? 20 : 50;
+    for (let i = 0; i < need.length; i += batch) {
+      const chunk = need.slice(i, i + batch);
+      const params = {
+        titles: chunk.map(U.normTitle).join('|'),
+        redirects: '1',
+        prop: 'pageimages|description' + (extract ? '|extracts' : ''),
+        piprop: 'thumbnail',
+        pithumbsize: String(thumbSize),
+        pilimit: String(batch),
+      };
+      if (extract) Object.assign(params, { exintro: '1', explaintext: '1', exsentences: '2', exlimit: String(batch) });
+      const data = await W.api(params, { signal });
+      const q = data.query || {};
+      const alias = new Map();
+      for (const n of q.normalized || []) alias.set(n.from, n.to);
+      for (const r of q.redirects || []) alias.set(r.from, r.to);
+      const byTitle = new Map((q.pages || []).map((p) => [p.title, p]));
+      for (const t of chunk) {
+        let k = U.normTitle(t);
+        for (let hops = 0; alias.has(k) && hops < 3; hops++) k = alias.get(k);
+        const p = byTitle.get(k);
+        const info = p && !p.missing && !p.invalid
+          ? { title: p.title, description: p.description || '', extract: p.extract || '', thumb: p.thumbnail ? p.thumbnail.source : null, missing: false }
+          : { title: k, description: '', extract: '', thumb: null, missing: true };
+        infoCache.set(U.normTitle(t) + (extract ? '|x' : ''), info);
+        out.set(t, info);
+      }
+    }
+    return out;
+  };
+
+  W.info = async (title, opts) => (await W.pageInfo([title], opts)).get(title);
+
+  // ---------- Search / random ----------
+
+  /** Prefix search with thumbnails, for autocomplete. */
+  W.search = async (q, { signal, limit = 8 } = {}) => {
+    q = q.trim();
+    if (!q) return [];
+    const data = await W.api(
+      {
+        generator: 'prefixsearch',
+        gpssearch: q,
+        gpslimit: String(limit),
+        gpsnamespace: '0',
+        redirects: '1',
+        prop: 'pageimages|description',
+        piprop: 'thumbnail',
+        pithumbsize: '80',
+        pilimit: String(limit),
+      },
+      { signal }
+    );
+    const pages = (data.query && data.query.pages) || [];
+    const seen = new Set();
+    return pages
+      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+      .filter((p) => !seen.has(p.title) && seen.add(p.title))
+      .map((p) => ({ title: p.title, description: p.description || '', thumb: p.thumbnail ? p.thumbnail.source : null }));
+  };
+
+  /** A "decent" random article: sample a few and keep the longest (skips stubs). */
+  W.randomArticle = async ({ signal, exclude = [] } = {}) => {
+    const data = await W.api({ generator: 'random', grnnamespace: '0', grnlimit: '12', prop: 'info' }, { signal });
+    const pages = ((data.query && data.query.pages) || [])
+      .filter((p) => !exclude.includes(p.title) && !/^List of|disambiguation/i.test(p.title))
+      .sort((a, b) => (b.length || 0) - (a.length || 0));
+    return pages[0] ? pages[0].title : null;
+  };
+
+  /** Canonical titles for inputs (follows redirects). Map<input, title|null>. */
+  W.resolve = async (titles, { signal } = {}) => {
+    const info = await W.pageInfo(titles, { signal });
+    const out = new Map();
+    for (const t of titles) {
+      const i = info.get(t);
+      out.set(t, i && !i.missing ? i.title : null);
+    }
+    return out;
+  };
+
+  // ---------- Raw link graph queries (live Six Degrees engine) ----------
+
+  /** Outgoing article links from one page, redirects resolved, red links dropped. */
+  W.outgoingLinks = async (title, { signal, maxRequests = 6 } = {}) => {
+    const links = new Set();
+    const res = await W.apiAll(
+      { generator: 'links', titles: title, gplnamespace: '0', gpllimit: 'max', redirects: '1' },
+      (data) => {
+        for (const p of (data.query && data.query.pages) || []) {
+          if (!p.missing && !p.invalid && p.ns === 0) links.add(p.title);
+        }
+      },
+      { signal, maxRequests }
+    );
+    return { links: [...links], complete: res.complete, requests: res.requests };
+  };
+
+  /** Incoming links for up to 50 pages at once. Redirects pointing at a page are followed one level. */
+  W.incomingLinks = async (titles, { signal, maxRequests = 10 } = {}) => {
+    const map = new Map(titles.map((t) => [t, new Set()]));
+    const redirects = new Map(); // redirect title -> target title
+    let complete = true;
+    let requests = 0;
+    const collect = (data, attributeTo) => {
+      for (const p of (data.query && data.query.pages) || []) {
+        const target = attributeTo ? attributeTo.get(p.title) : p.title;
+        const set = map.get(target);
+        if (!set) continue;
+        for (const l of p.linkshere || []) {
+          if (l.redirect && !attributeTo) redirects.set(l.title, target);
+          else if (!l.redirect) set.add(l.title);
+        }
+      }
+    };
+    const params = { prop: 'linkshere', lhnamespace: '0', lhlimit: 'max', lhprop: 'title|redirect' };
+    const r1 = await W.apiAll({ ...params, titles: titles.join('|') }, (d) => collect(d), { signal, maxRequests });
+    requests += r1.requests;
+    complete = complete && r1.complete;
+    const rTitles = [...redirects.keys()];
+    for (let i = 0; i < rTitles.length && requests < maxRequests * 2; i += 50) {
+      const chunk = rTitles.slice(i, i + 50);
+      const r2 = await W.apiAll({ ...params, titles: chunk.join('|') }, (d) => collect(d, redirects), {
+        signal,
+        maxRequests: Math.max(1, maxRequests - r1.requests),
+      });
+      requests += r2.requests;
+      complete = complete && r2.complete;
+    }
+    const out = new Map();
+    for (const [k, v] of map) out.set(k, [...v]);
+    return { links: out, complete, requests };
+  };
+
+  /** Which of `from` link directly to any of `to`? Map<from, to[]>. Uses the pltitles filter, 50×50 per request. */
+  W.linksBetween = async (from, to, { signal, concurrency = 4 } = {}) => {
+    const out = new Map();
+    const jobs = [];
+    for (let i = 0; i < from.length; i += 50) {
+      for (let j = 0; j < to.length; j += 50) jobs.push([from.slice(i, i + 50), to.slice(j, j + 50)]);
+    }
+    let requests = 0;
+    await U.pool(
+      jobs,
+      concurrency,
+      async ([f, t]) => {
+        const r = await W.apiAll(
+          { prop: 'links', titles: f.join('|'), pltitles: t.join('|'), pllimit: 'max', plnamespace: '0' },
+          (data) => {
+            for (const p of (data.query && data.query.pages) || []) {
+              for (const l of p.links || []) {
+                if (!out.has(p.title)) out.set(p.title, []);
+                out.get(p.title).push(l.title);
+              }
+            }
+          },
+          { signal, maxRequests: 10 }
+        );
+        requests += r.requests;
+      },
+      { signal }
+    );
+    return { links: out, requests };
+  };
+
+  // ---------- Link classification for in-game navigation ----------
+
+  const NON_ARTICLE_NS = new Set(
+    'Media Special Talk User User talk Wikipedia Wikipedia talk WP Project File File talk Image MediaWiki MediaWiki talk Template Template talk Help Help talk Category Category talk Portal Portal talk Draft Draft talk TimedText TimedText talk Module Module talk Book Education Program Gadget Gadget definition Topic Wikt Wiktionary Commons Meta S Q V N B Species Mw Foundation Wmf Wikisource Wikiquote Wikivoyage Wikibooks Wikinews Wikiversity Wikidata D'.split(
+      ' '
+    ).map((s) => s.toLowerCase())
+  );
+  // Two-word namespaces the split above chopped up.
+  ['user talk', 'wikipedia talk', 'file talk', 'mediawiki talk', 'template talk', 'help talk', 'category talk', 'portal talk', 'draft talk', 'timedtext talk', 'module talk', 'gadget definition', 'education program'].forEach((n) => NON_ARTICLE_NS.add(n));
+
+  /** For an <a href>, return the target article title if it's a playable link, else null. */
+  W.linkTarget = (href) => {
+    if (!href) return null;
+    let path = href;
+    if (/^https?:\/\/en\.wikipedia\.org\/wiki\//i.test(path)) path = path.replace(/^https?:\/\/en\.wikipedia\.org/i, '');
+    const m = /^(?:\.\/|\/wiki\/)([^?#]+)(#.*)?$/.exec(path);
+    if (!m) return null;
+    let title;
+    try {
+      title = decodeURIComponent(m[1]).replace(/_/g, ' ');
+    } catch (e) {
+      return null;
+    }
+    const colon = title.indexOf(':');
+    if (colon > 0 && NON_ARTICLE_NS.has(title.slice(0, colon).trim().toLowerCase())) return null;
+    return { title: U.normTitle(title), fragment: m[2] ? m[2].slice(1) : null };
+  };
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = WS;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>
+/* Built-in Six Degrees of Wikipedia.
+ *
+ * Two engines, same result shape:
+ *   - "sdow": the Six Degrees of Wikipedia API (github.com/jwngr/sdow), which runs a
+ *     bi-directional BFS over a full snapshot of the Wikipedia link graph. Fast, exhaustive.
+ *   - "live": a port of SDOW's breadth_first_search.py that runs in your browser against the
+ *     live Wikipedia API. Slower, but works for brand-new articles and when the API is down.
+ *
+ * Result: { engine, source, target, degrees, paths: [[{title, description, thumb}]],
+ *           totalPaths, approximate, ms }
+ */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const SDOW_API = 'https://api.sixdegreesofwikipedia.com/paths';
+
+  const S = (WS.sdow = {});
+
+  // ---------------------------------------------------------------------------
+  // Core algorithm (pure; unit-tested in tests/bfs.test.js)
+  // ---------------------------------------------------------------------------
+
+  /** Walks parent pointers back to the root (whose parent list is [null]). Port of SDOW get_paths. */
+  function getPaths(parents, visited, limit) {
+    const out = [];
+    for (const id of parents) {
+      if (id === null) return [[]];
+      for (const p of getPaths(visited.get(id), visited, limit)) {
+        out.push(p.concat([id]));
+        if (out.length >= limit) return out;
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Bi-directional BFS, faithful to SDOW's algorithm: expand whichever side is cheaper, stop at
+   * the first depth where the frontiers meet, return every shortest path found at that depth.
+   *
+   * io.outgoing(node)        -> Promise<{links: node[], complete}>   (one node)
+   * io.incoming(nodes[])     -> Promise<{links: Map<node, node[]>, complete}> (a batch)
+   *
+   * Differences from SDOW (because live Wikipedia has no precomputed link counts):
+   *   - cost of a side is estimated as frontierSize × running average degree;
+   *   - a level can stop early once `maxPaths` shortest paths are found (they're all still shortest);
+   *   - `budget()` lets the caller abort when too many requests have been spent.
+   */
+  S.bidirectionalSearch = async (source, target, io, opts = {}) => {
+    const {
+      maxPaths = 200,
+      concurrency = 4,
+      incomingBatch = 50,
+      signal,
+      onProgress = () => {},
+      overBudget = () => false,
+      maxDepth = 8,
+      probeLimit = 40,
+    } = opts;
+
+    if (source === target) return { paths: [[source]], degrees: 0, approximate: false, explored: 0 };
+
+    let fwd = new Map([[source, [null]]]);
+    let bwd = new Map([[target, [null]]]);
+    const fwdVisited = new Map();
+    const bwdVisited = new Map();
+    let fDepth = 0;
+    let bDepth = 0;
+    let avgOut = 300;
+    let avgIn = 900;
+    let approximate = false;
+    let explored = 0;
+    const meet = new Set();
+
+    const aborted = () => signal && signal.aborted;
+
+    while (!meet.size && fwd.size && bwd.size) {
+      if (aborted()) throw signal.reason || new DOMException('Aborted', 'AbortError');
+      if (fDepth + bDepth >= maxDepth || overBudget()) return { paths: [], degrees: null, approximate: true, explored, gaveUp: true };
+
+      // Probe (live engine only): if the frontiers are small, ask directly which forward pages link
+      // into the backward frontier. Any hit is an edge between the frontiers, so it completes a
+      // shortest path of length fDepth + bDepth + 1 — far cheaper than a full expansion.
+      if (io.probe && Math.ceil(fwd.size / 50) * Math.ceil(bwd.size / 50) <= probeLimit) {
+        onProgress({ direction: 'probe', depth: fDepth + bDepth + 1, frontier: fwd.size, explored });
+        const hits = await io.probe([...fwd.keys()], [...bwd.keys()]);
+        if (hits.size) {
+          fDepth++;
+          for (const [k, v] of fwd) fwdVisited.set(k, v);
+          const next = new Map();
+          for (const [f, bs] of hits) {
+            for (const b of bs) {
+              if (!bwd.has(b) || fwdVisited.has(b)) continue;
+              if (!next.has(b)) next.set(b, []);
+              next.get(b).push(f);
+              meet.add(b);
+            }
+          }
+          fwd = next;
+          if (meet.size) break;
+        }
+      }
+
+      const fCost = fwd.size * avgOut;
+      const bCost = bwd.size * avgIn;
+      const forward = fCost <= bCost;
+      const next = new Map();
+      let degreeSum = 0;
+      let degreeN = 0;
+
+      // Enough meeting nodes to build maxPaths paths? (each meet node gives >= 1 path)
+      const enough = () => meet.size >= maxPaths || overBudget();
+
+      if (forward) {
+        fDepth++;
+        for (const [k, v] of fwd) fwdVisited.set(k, v);
+        const nodes = [...fwd.keys()];
+        onProgress({ direction: 'forward', depth: fDepth + bDepth, frontier: nodes.length, explored });
+        await U.pool(
+          nodes,
+          concurrency,
+          async (node) => {
+            const r = await io.outgoing(node);
+            explored++;
+            if (!r.complete) approximate = true;
+            degreeSum += r.links.length;
+            degreeN++;
+            for (const child of r.links) {
+              if (fwdVisited.has(child)) continue;
+              const parents = next.get(child);
+              if (parents) parents.push(node);
+              else next.set(child, [node]);
+              if (bwd.has(child)) meet.add(child);
+            }
+            if (explored % 10 === 0) onProgress({ direction: 'forward', depth: fDepth + bDepth, frontier: nodes.length, explored });
+          },
+          { signal, shouldStop: enough }
+        );
+        if (degreeN) avgOut = Math.max(1, degreeSum / degreeN);
+        fwd = next;
+      } else {
+        bDepth++;
+        for (const [k, v] of bwd) bwdVisited.set(k, v);
+        const nodes = [...bwd.keys()];
+        const batches = [];
+        for (let i = 0; i < nodes.length; i += incomingBatch) batches.push(nodes.slice(i, i + incomingBatch));
+        onProgress({ direction: 'backward', depth: fDepth + bDepth, frontier: nodes.length, explored });
+        await U.pool(
+          batches,
+          concurrency,
+          async (batch) => {
+            const r = await io.incoming(batch);
+            explored += batch.length;
+            if (!r.complete) approximate = true;
+            for (const node of batch) {
+              const parentsOf = r.links.get(node) || [];
+              degreeSum += parentsOf.length;
+              degreeN++;
+              for (const child of parentsOf) {
+                if (bwdVisited.has(child)) continue;
+                const parents = next.get(child);
+                if (parents) parents.push(node);
+                else next.set(child, [node]);
+                if (fwd.has(child)) meet.add(child);
+              }
+            }
+            onProgress({ direction: 'backward', depth: fDepth + bDepth, frontier: nodes.length, explored });
+          },
+          { signal, shouldStop: enough }
+        );
+        if (degreeN) avgIn = Math.max(1, degreeSum / degreeN);
+        bwd = next;
+      }
+    }
+
+    const paths = [];
+    const seen = new Set();
+    for (const m of meet) {
+      const fromSource = getPaths(fwd.get(m), fwdVisited, maxPaths);
+      const fromTarget = getPaths(bwd.get(m), bwdVisited, maxPaths);
+      for (const a of fromSource) {
+        for (const b of fromTarget) {
+          const p = a.concat([m], b.slice().reverse());
+          const key = p.join('\u0001');
+          if (!seen.has(key)) {
+            seen.add(key);
+            paths.push(p);
+          }
+          if (paths.length >= maxPaths) break;
+        }
+        if (paths.length >= maxPaths) break;
+      }
+      if (paths.length >= maxPaths) break;
+    }
+    paths.sort((a, b) => a.join('|').localeCompare(b.join('|')));
+    return {
+      paths,
+      degrees: paths.length ? paths[0].length - 1 : null,
+      approximate,
+      explored,
+      noPath: !paths.length,
+    };
+  };
+
+  // ---------------------------------------------------------------------------
+  // Engine 1: Six Degrees of Wikipedia API
+  // ---------------------------------------------------------------------------
+
+  const cache = new Map();
+  const cacheKey = (a, b) => U.normTitle(a) + '→' + U.normTitle(b);
+
+  S.viaApi = async (source, target, { signal } = {}) => {
+    const t0 = performance.now();
+    let res;
+    try {
+      res = await fetch(SDOW_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: U.normTitle(source), target: U.normTitle(target) }),
+        signal,
+      });
+    } catch (e) {
+      if (e.name === 'AbortError') throw e;
+      const err = new Error('Could not reach the Six Degrees of Wikipedia API.');
+      err.network = true;
+      throw err;
+    }
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (e) { /* non-JSON error page */ }
+    if (!res.ok || !data) {
+      const err = new Error((data && data.error) || `Six Degrees API error (HTTP ${res.status}).`);
+      err.status = res.status;
+      err.network = res.status >= 500 || res.status === 429;
+      throw err;
+    }
+    const pages = data.pages || {};
+    const paths = (data.paths || []).map((p) =>
+      p.map((id) => {
+        const pg = pages[id] || {};
+        return { title: pg.title || String(id), description: pg.description || '', thumb: pg.thumbnailUrl || null };
+      })
+    );
+    return {
+      engine: 'sdow',
+      source: data.sourcePageTitle || U.normTitle(source),
+      target: data.targetPageTitle || U.normTitle(target),
+      degrees: paths.length ? paths[0].length - 1 : null,
+      paths,
+      totalPaths: paths.length,
+      approximate: false,
+      ms: performance.now() - t0,
+    };
+  };
+
+  // ---------------------------------------------------------------------------
+  // Engine 2: live, in-browser BFS against the Wikipedia API
+  // ---------------------------------------------------------------------------
+
+  S.viaLive = async (source, target, { signal, onProgress = () => {}, maxRequests = 1500, maxPaths = 60 } = {}) => {
+    const t0 = performance.now();
+    const W = WS.wiki;
+    const resolved = await W.resolve([source, target], { signal });
+    const s = resolved.get(source);
+    const t = resolved.get(target);
+    if (!s) throw Object.assign(new Error(`Start page "${source}" does not exist on Wikipedia.`), { status: 400 });
+    if (!t) throw Object.assign(new Error(`End page "${target}" does not exist on Wikipedia.`), { status: 400 });
+
+    let requests = 0;
+    const io = {
+      outgoing: async (node) => {
+        const r = await W.outgoingLinks(node, { signal, maxRequests: 6 });
+        requests += r.requests;
+        return r;
+      },
+      incoming: async (nodes) => {
+        // The very first backward step (just the target) is allowed to dig deeper.
+        const r = await W.incomingLinks(nodes, { signal, maxRequests: nodes.length === 1 ? 16 : 8 });
+        requests += r.requests;
+        return r;
+      },
+      probe: async (from, to) => {
+        const r = await W.linksBetween(from, to, { signal, concurrency: 4 });
+        requests += r.requests;
+        return r.links;
+      },
+    };
+    const r = await S.bidirectionalSearch(s, t, io, {
+      signal,
+      maxPaths,
+      overBudget: () => requests >= maxRequests,
+      onProgress: (p) => onProgress({ ...p, requests }),
+    });
+
+    // Decorate path nodes with descriptions + thumbnails.
+    const titles = [...new Set(r.paths.flat())];
+    const info = titles.length ? await W.pageInfo(titles, { signal }) : new Map();
+    const paths = r.paths.map((p) =>
+      p.map((title) => {
+        const i = info.get(title) || {};
+        return { title, description: i.description || '', thumb: i.thumb || null };
+      })
+    );
+    return {
+      engine: 'live',
+      source: s,
+      target: t,
+      degrees: r.degrees,
+      paths,
+      totalPaths: paths.length,
+      approximate: r.approximate || !!r.gaveUp,
+      gaveUp: !!r.gaveUp,
+      requests,
+      ms: performance.now() - t0,
+    };
+  };
+
+  // ---------------------------------------------------------------------------
+  // Public entry points
+  // ---------------------------------------------------------------------------
+
+  /** engine: 'auto' (API, falling back to live), 'sdow', or 'live'. */
+  S.find = async (source, target, { engine = 'auto', signal, onProgress, maxRequests } = {}) => {
+    const key = cacheKey(source, target) + '|' + engine;
+    if (cache.has(key)) return cache.get(key);
+    let result;
+    if (engine === 'live') {
+      result = await S.viaLive(source, target, { signal, onProgress, maxRequests });
+    } else {
+      try {
+        result = await S.viaApi(source, target, { signal });
+      } catch (e) {
+        // 400 = a page SDOW's snapshot doesn't know (e.g. brand new article); network = API down.
+        if (engine === 'auto' && (e.status === 400 || e.network)) {
+          onProgress && onProgress({ fallback: true, reason: e.message });
+          result = await S.viaLive(source, target, { signal, onProgress, maxRequests });
+          result.fallbackReason = e.message;
+        } else throw e;
+      }
+    }
+    cache.set(key, result);
+    return result;
+  };
+
+  /** Degrees of separation from `from` to `target` (null if unknown / unreachable). API only; cached. */
+  const distCache = new Map();
+  S.distance = async (from, target, { signal } = {}) => {
+    const key = cacheKey(from, target);
+    if (U.normTitle(from) === U.normTitle(target)) return { degrees: 0, next: [] };
+    if (!distCache.has(key)) {
+      distCache.set(
+        key,
+        S.viaApi(from, target, { signal })
+          .then((r) => ({
+            degrees: r.degrees,
+            // First hop of every shortest path — used for hints.
+            next: [...new Set(r.paths.map((p) => p[1] && p[1].title).filter(Boolean))],
+            result: r,
+          }))
+          .catch((e) => {
+            distCache.delete(key);
+            throw e;
+          })
+      );
+    }
+    return distCache.get(key);
+  };
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = WS;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>
+/* Curated pool of well-known articles for Daily and Random challenges.
+ * Popular pages make for fair, fun runs — truly random Wikipedia pages are mostly village stubs. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+
+  const POOL = {
+    People: [
+      'Albert Einstein', 'Isaac Newton', 'Marie Curie', 'Charles Darwin', 'Leonardo da Vinci', 'William Shakespeare',
+      'Napoleon', 'Cleopatra', 'Julius Caesar', 'Genghis Khan', 'Abraham Lincoln', 'Mahatma Gandhi', 'Nelson Mandela',
+      'Martin Luther King Jr.', 'Queen Victoria', 'Elizabeth II', 'Winston Churchill', 'Ada Lovelace', 'Alan Turing',
+      'Nikola Tesla', 'Thomas Edison', 'Galileo Galilei', 'Aristotle', 'Plato', 'Confucius', 'Wolfgang Amadeus Mozart',
+      'Ludwig van Beethoven', 'Johann Sebastian Bach', 'Pablo Picasso', 'Vincent van Gogh', 'Frida Kahlo', 'Michael Jackson',
+      'Elvis Presley', 'The Beatles', 'Taylor Swift', 'Beyoncé', 'Serena Williams', 'Muhammad Ali', 'Michael Jordan',
+      'Lionel Messi', 'Cristiano Ronaldo', 'Usain Bolt', 'Walt Disney', 'Steve Jobs', 'Bill Gates', 'Elon Musk',
+      'Oprah Winfrey', 'Stephen Hawking', 'Sigmund Freud', 'Karl Marx', 'Joan of Arc', 'Alexander the Great',
+      'Marco Polo', 'Christopher Columbus', 'Neil Armstrong', 'Amelia Earhart', 'Frederick Douglass', 'Harriet Tubman',
+      'Jane Austen', 'Charles Dickens', 'Mark Twain', 'J. K. Rowling', 'Agatha Christie', 'Homer',
+    ],
+    Places: [
+      'Paris', 'London', 'New York City', 'Tokyo', 'Rome', 'Cairo', 'Istanbul', 'Sydney', 'Rio de Janeiro', 'Mumbai',
+      'Beijing', 'Moscow', 'Venice', 'Antarctica', 'Mount Everest', 'Sahara', 'Amazon rainforest', 'Great Barrier Reef',
+      'Grand Canyon', 'Iceland', 'Japan', 'Brazil', 'Australia', 'Canada', 'Egypt', 'India', 'Mexico', 'Greece',
+      'New Zealand', 'Madagascar', 'Hawaii', 'Alaska', 'Las Vegas', 'Hollywood', 'Silicon Valley', 'Mars', 'Moon',
+      'Sun', 'Jupiter', 'Pacific Ocean', 'Nile', 'Mississippi River', 'Atlantis', 'Machu Picchu', 'Stonehenge',
+      'Eiffel Tower', 'Great Wall of China', 'Taj Mahal', 'Colosseum', 'Statue of Liberty', 'Pyramid of Giza',
+      'Vatican City', 'Monaco', 'Singapore', 'Dubai', 'Yellowstone National Park', 'Niagara Falls', 'Chernobyl disaster',
+    ],
+    Science: [
+      'Black hole', 'Big Bang', 'DNA', 'Photosynthesis', 'Evolution', 'Gravity', 'Quantum mechanics', 'Theory of relativity',
+      'Periodic table', 'Atom', 'Electricity', 'Magnetism', 'Volcano', 'Earthquake', 'Tsunami', 'Climate change',
+      'Plate tectonics', 'Dinosaur', 'Tyrannosaurus', 'Human brain', 'Heart', 'Vaccine', 'Penicillin', 'COVID-19 pandemic',
+      'Virus', 'Bacteria', 'Cell (biology)', 'Photon', 'Speed of light', 'Pi', 'Prime number', 'Zero', 'Infinity',
+      'Fibonacci sequence', 'Algorithm', 'Artificial intelligence', 'Internet', 'World Wide Web', 'Computer', 'Smartphone',
+      'Bitcoin', 'Laser', 'Nuclear power', 'Solar System', 'Milky Way', 'International Space Station', 'Apollo 11',
+      'Hubble Space Telescope', 'Rainbow', 'Aurora', 'Lightning', 'Oxygen', 'Water', 'Gold', 'Diamond', 'Iron',
+    ],
+    Nature: [
+      'Cat', 'Dog', 'Horse', 'Elephant', 'Lion', 'Tiger', 'Giant panda', 'Polar bear', 'Blue whale', 'Dolphin', 'Shark',
+      'Octopus', 'Penguin', 'Eagle', 'Owl', 'Honey bee', 'Ant', 'Butterfly', 'Spider', 'Snake', 'Crocodile', 'Kangaroo',
+      'Koala', 'Giraffe', 'Gorilla', 'Chimpanzee', 'Wolf', 'Fox', 'Rabbit', 'Chicken', 'Frog', 'Tardigrade', 'Coral reef',
+      'Oak', 'Rose', 'Sunflower', 'Bamboo', 'Cactus', 'Mushroom', 'Banana', 'Apple', 'Coffee', 'Tea', 'Chocolate',
+    ],
+    Culture: [
+      'Pizza', 'Sushi', 'Hamburger', 'Ice cream', 'Cheese', 'Bread', 'Beer', 'Wine', 'Olympic Games', 'FIFA World Cup',
+      'Super Bowl', 'Chess', 'Basketball', 'Association football', 'Cricket', 'Tennis', 'Baseball', 'Golf', 'Skateboarding',
+      'Harry Potter', 'The Lord of the Rings', 'Star Wars', 'Star Trek', 'Game of Thrones', 'The Simpsons', 'Pokémon',
+      'Super Mario', 'Minecraft', 'Tetris', 'The Legend of Zelda', 'Batman', 'Superman', 'Spider-Man', 'Mickey Mouse',
+      'Godzilla', 'Titanic (1997 film)', 'The Godfather', 'Mona Lisa', 'The Starry Night', 'Jazz', 'Hip hop music',
+      'Rock music', 'Opera', 'Ballet', 'Piano', 'Guitar', 'Violin', 'Christmas', 'Halloween', 'Chinese New Year',
+      'Diwali', 'Lego', 'Barbie', 'Rubik\'s Cube', 'Monopoly (game)', 'Dungeons & Dragons', 'Anime', 'K-pop', 'Emoji',
+    ],
+    History: [
+      'World War I', 'World War II', 'Cold War', 'Roman Empire', 'Ancient Egypt', 'Ancient Greece', 'Vikings',
+      'Middle Ages', 'Renaissance', 'Industrial Revolution', 'French Revolution', 'American Revolution', 'Black Death',
+      'Titanic', 'Moon landing', 'Fall of the Berlin Wall', 'Printing press', 'Silk Road', 'Aztecs', 'Inca Empire',
+      'Mongol Empire', 'Ottoman Empire', 'British Empire', 'Samurai', 'Knight', 'Pirate', 'Great Depression',
+      'Space Race', 'United Nations', 'European Union', 'Democracy', 'Magna Carta', 'Declaration of Independence',
+      'Wright brothers', 'Steam engine', 'Wheel', 'Writing', 'Money', 'Olympia, Greece',
+    ],
+    Things: [
+      'Automobile', 'Bicycle', 'Airplane', 'Train', 'Rocket', 'Submarine', 'Ship', 'Telephone', 'Television', 'Radio',
+      'Camera', 'Clock', 'Book', 'Paper', 'Glass', 'Plastic', 'Umbrella', 'Toilet', 'Refrigerator', 'Light bulb',
+      'Robot', 'Video game', 'Sword', 'Castle', 'Skyscraper', 'Bridge', 'Library', 'Museum', 'University', 'Hospital',
+    ],
+  };
+
+  const ALL = [];
+  for (const [cat, list] of Object.entries(POOL)) for (const t of list) ALL.push({ title: t, category: cat });
+
+  WS.articles = {
+    POOL,
+    ALL,
+    /** Two distinct articles from different categories, from a [0,1) random source. */
+    pickPair(rand = Math.random) {
+      const a = ALL[Math.floor(rand() * ALL.length)];
+      let b;
+      for (let i = 0; i < 50; i++) {
+        b = ALL[Math.floor(rand() * ALL.length)];
+        if (b.title !== a.title && b.category !== a.category) break;
+      }
+      return [a.title, b.title];
+    },
+    /** Same pair for everyone on a given UTC date. */
+    dailyPair(dateKey) {
+      return this.pickPair(WS.util.rng(WS.util.hash('wiki-speedruns-daily:' + dateKey)));
+    },
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>
+/* Run history + settings. Local first (works offline / logged out), mirrored to Firestore when signed in. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const MAX_LOCAL = 300;
+
+  const S = (WS.store = {});
+
+  S.settings = () => ({ theme: 'auto', showPar: false, hideRefs: true, ...U.store.get('settings', {}) });
+  S.setSetting = (k, v) => U.store.set('settings', { ...S.settings(), [k]: v });
+
+  S.localRuns = () => U.store.get('runs', []);
+
+  S.getRun = (id) => S.localRuns().find((r) => r.id === id) || (S._cloud || []).find((r) => r.id === id) || null;
+
+  S.saveRun = async (run) => {
+    const runs = S.localRuns().filter((r) => r.id !== run.id);
+    runs.unshift(run);
+    U.store.set('runs', runs.slice(0, MAX_LOCAL));
+    try {
+      await WS.fb.saveRun(run);
+    } catch (e) {
+      console.warn('cloud save failed', e);
+    }
+  };
+
+  /** Patch fields on a saved run (e.g. once the optimal distance is known). */
+  S.updateRun = async (id, patch) => {
+    const runs = S.localRuns();
+    const i = runs.findIndex((r) => r.id === id);
+    let run = i >= 0 ? runs[i] : (S._cloud || []).find((r) => r.id === id);
+    if (!run) return;
+    run = Object.assign(run, patch);
+    if (i >= 0) U.store.set('runs', runs);
+    try {
+      await WS.fb.saveRun(run);
+    } catch (e) { /* ignore */ }
+  };
+
+  S.deleteRun = async (id) => {
+    U.store.set('runs', S.localRuns().filter((r) => r.id !== id));
+    if (S._cloud) S._cloud = S._cloud.filter((r) => r.id !== id);
+    try { await WS.fb.deleteRun(id); } catch (e) { /* ignore */ }
+  };
+
+  /** Local + cloud runs, de-duplicated, newest first. Uploads local-only runs after sign-in. */
+  S.allRuns = async () => {
+    const local = S.localRuns();
+    let cloud = [];
+    try {
+      cloud = await WS.fb.myRuns();
+      S._cloud = cloud;
+    } catch (e) {
+      console.warn('cloud runs', e);
+    }
+    const byId = new Map();
+    for (const r of cloud) byId.set(r.id, r);
+    const toUpload = [];
+    for (const r of local) {
+      if (!byId.has(r.id)) {
+        byId.set(r.id, r);
+        if (WS.fb.user) toUpload.push(r);
+      }
+    }
+    toUpload.slice(0, 50).forEach((r) => WS.fb.saveRun(r).catch(() => {}));
+    return [...byId.values()].sort((a, b) => b.createdAt - a.createdAt);
+  };
+
+  // Daily attempt tracking (local). The server enforces first-attempt-only for signed-in players.
+  S.dailyAttempt = (dateKey) => U.store.get('daily.' + dateKey, null);
+  S.setDailyAttempt = (dateKey, run) =>
+    U.store.set('daily.' + dateKey, { runId: run.id, finished: run.finished, clicks: run.clicks, timeMs: run.timeMs });
+
+  S.streak = () => {
+    let n = 0;
+    const d = new Date();
+    // Today counts if played; otherwise start from yesterday so the streak isn't "broken" yet.
+    if (!S.dailyAttempt(U.todayKey(d))) d.setUTCDate(d.getUTCDate() - 1);
+    for (;;) {
+      const a = S.dailyAttempt(U.todayKey(d));
+      if (!a || !a.finished) break;
+      n++;
+      d.setUTCDate(d.getUTCDate() - 1);
+    }
+    return n;
+  };
+
+  S.stats = (runs) => {
+    const done = runs.filter((r) => r.finished);
+    const withOpt = done.filter((r) => r.optimal);
+    const avg = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+    return {
+      played: runs.length,
+      finished: done.length,
+      avgClicks: avg(done.map((r) => r.clicks)),
+      avgTime: avg(done.map((r) => r.timeMs)),
+      bestTime: done.length ? Math.min(...done.map((r) => r.timeMs)) : null,
+      perfect: withOpt.filter((r) => r.clicks <= r.optimal).length,
+      efficiency: avg(withOpt.map((r) => Math.min(1, r.optimal / r.clicks))),
+    };
+  };
+})(window);
+
+</script>
+  <script>
+/* Firebase Auth + Firestore. Loaded lazily from the CDN; the whole app works without it
+ * (runs are always kept locally), login just adds cloud sync and the daily leaderboard. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const SDK = 'https://www.gstatic.com/firebasejs/12.3.0/';
+
+  const FB = (WS.fb = { enabled: false, user: null, profile: null, error: null });
+  const listeners = new Set();
+  let m = {}; // loaded SDK functions
+  let auth, db;
+
+  FB.onChange = (fn) => {
+    listeners.add(fn);
+    return () => listeners.delete(fn);
+  };
+  const emit = () => listeners.forEach((fn) => { try { fn(FB.user, FB.profile); } catch (e) { console.error(e); } });
+
+  async function loadConfig() {
+    const c = root.WS_FIREBASE_CONFIG;
+    if (c && c.apiKey) return { ...c };
+    if (!/^https?:$/.test(location.protocol)) return null;
+    try {
+      // Firebase Hosting serves the project's web config here.
+      const res = await fetch('/__/firebase/init.json', { cache: 'no-store' });
+      if (res.ok && (res.headers.get('content-type') || '').includes('json')) return await res.json();
+    } catch (e) { /* not on Firebase Hosting */ }
+    return null;
+  }
+
+  FB.ready = (async () => {
+    const cfg = await loadConfig();
+    if (!cfg) return false;
+    // Serve the auth handler from our own domain so sign-in works with third-party cookies blocked.
+    if (/\.(web\.app|firebaseapp\.com)$/.test(location.hostname)) cfg.authDomain = location.hostname;
+    const [app, a, f] = await Promise.all([
+      import(SDK + 'firebase-app.js'),
+      import(SDK + 'firebase-auth.js'),
+      import(SDK + 'firebase-firestore.js'),
+    ]);
+    m = { ...app, ...a, ...f };
+    const fbApp = m.initializeApp(cfg);
+    auth = m.getAuth(fbApp);
+    db = m.getFirestore(fbApp);
+    FB.enabled = true;
+    m.getRedirectResult(auth).catch((e) => U.toast(friendly(e), 'bad'));
+    await new Promise((resolve) => {
+      let first = true;
+      m.onAuthStateChanged(auth, async (user) => {
+        FB.user = user;
+        FB.profile = null;
+        if (user) {
+          try {
+            FB.profile = await ensureProfile(user);
+          } catch (e) {
+            console.warn('profile', e);
+            FB.profile = { displayName: displayNameFor(user), photoURL: user.photoURL || null };
+          }
+        }
+        emit();
+        if (first) {
+          first = false;
+          resolve();
+        }
+      });
+    });
+    return true;
+  })().catch((e) => {
+    console.warn('Firebase unavailable:', e);
+    FB.error = e;
+    return false;
+  });
+
+  function displayNameFor(user) {
+    if (user.displayName) return user.displayName.slice(0, 32);
+    if (user.email) return user.email.split('@')[0].slice(0, 32);
+    return 'Guest ' + user.uid.slice(0, 4).toUpperCase();
+  }
+
+  async function ensureProfile(user) {
+    const ref = m.doc(db, 'users', user.uid);
+    const snap = await m.getDoc(ref);
+    if (snap.exists()) return snap.data();
+    const profile = {
+      displayName: displayNameFor(user),
+      photoURL: user.photoURL || null,
+      guest: user.isAnonymous,
+      createdAt: m.serverTimestamp(),
+    };
+    await m.setDoc(ref, profile);
+    return profile;
+  }
+
+  function friendly(e) {
+    const code = (e && e.code) || '';
+    const map = {
+      'auth/popup-closed-by-user': 'Sign-in cancelled.',
+      'auth/cancelled-popup-request': 'Sign-in cancelled.',
+      'auth/invalid-credential': 'Wrong email or password.',
+      'auth/wrong-password': 'Wrong email or password.',
+      'auth/user-not-found': 'No account with that email.',
+      'auth/email-already-in-use': 'That email already has an account — sign in instead.',
+      'auth/weak-password': 'Password must be at least 6 characters.',
+      'auth/invalid-email': 'That email address looks wrong.',
+      'auth/operation-not-allowed': 'This sign-in method is not enabled in the Firebase console.',
+      'auth/unauthorized-domain': 'This domain is not authorized for sign-in (add it in Firebase → Auth → Settings).',
+      'auth/network-request-failed': 'Network error — check your connection.',
+      'auth/too-many-requests': 'Too many attempts. Try again later.',
+      'auth/admin-restricted-operation': 'Guest sign-in is not enabled in the Firebase console.',
+    };
+    return map[code] || (e && e.message) || 'Something went wrong.';
+  }
+  FB.friendly = friendly;
+
+  async function need() {
+    const ok = await FB.ready;
+    if (!ok) throw new Error('Login is not configured for this copy of WikiSpeedruns.');
+  }
+
+  FB.signInGoogle = async () => {
+    await need();
+    const provider = new m.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const cur = auth.currentUser;
+    try {
+      // Upgrading a guest keeps their history.
+      if (cur && cur.isAnonymous) {
+        try {
+          await m.linkWithPopup(cur, provider);
+          await m.updateDoc(m.doc(db, 'users', cur.uid), { guest: false, displayName: displayNameFor(auth.currentUser), photoURL: auth.currentUser.photoURL || null });
+          FB.profile = (await m.getDoc(m.doc(db, 'users', cur.uid))).data();
+          emit();
+          return;
+        } catch (e) {
+          if (e.code !== 'auth/credential-already-in-use') throw e;
+          const cred = m.GoogleAuthProvider.credentialFromError(e);
+          if (cred) return void (await m.signInWithCredential(auth, cred));
+        }
+      }
+      if (U.isStandalone()) return void (await m.signInWithRedirect(auth, provider));
+      await m.signInWithPopup(auth, provider);
+    } catch (e) {
+      if (e.code === 'auth/popup-blocked') return void (await m.signInWithRedirect(auth, provider));
+      throw new Error(friendly(e));
+    }
+  };
+
+  FB.signInEmail = async (email, password, create) => {
+    await need();
+    try {
+      if (create) {
+        const cur = auth.currentUser;
+        if (cur && cur.isAnonymous) {
+          await m.linkWithCredential(cur, m.EmailAuthProvider.credential(email, password));
+          await m.updateDoc(m.doc(db, 'users', cur.uid), { guest: false, displayName: email.split('@')[0].slice(0, 32) });
+          FB.profile = (await m.getDoc(m.doc(db, 'users', cur.uid))).data();
+          emit();
+        } else {
+          await m.createUserWithEmailAndPassword(auth, email, password);
+        }
+      } else {
+        await m.signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (e) {
+      throw new Error(friendly(e));
+    }
+  };
+
+  FB.resetPassword = async (email) => {
+    await need();
+    try {
+      await m.sendPasswordResetEmail(auth, email);
+    } catch (e) {
+      throw new Error(friendly(e));
+    }
+  };
+
+  FB.signInGuest = async () => {
+    await need();
+    try {
+      await m.signInAnonymously(auth);
+    } catch (e) {
+      throw new Error(friendly(e));
+    }
+  };
+
+  FB.signOut = async () => {
+    await need();
+    await m.signOut(auth);
+  };
+
+  FB.setDisplayName = async (name) => {
+    await need();
+    name = String(name).trim().slice(0, 32);
+    if (!name) throw new Error('Name cannot be empty.');
+    await m.updateDoc(m.doc(db, 'users', FB.user.uid), { displayName: name });
+    try { await m.updateProfile(FB.user, { displayName: name }); } catch (e) { /* guest accounts */ }
+    FB.profile = { ...FB.profile, displayName: name };
+    emit();
+  };
+
+  // ---------------- Runs & leaderboard ----------------
+
+  const clean = (run) => JSON.parse(JSON.stringify(run)); // drop undefined
+
+  FB.saveRun = async (run) => {
+    if (!(await FB.ready) || !FB.user) return false;
+    await m.setDoc(m.doc(db, 'users', FB.user.uid, 'runs', run.id), clean(run));
+    return true;
+  };
+
+  FB.myRuns = async (max = 200) => {
+    if (!(await FB.ready) || !FB.user) return [];
+    const q = m.query(m.collection(db, 'users', FB.user.uid, 'runs'), m.orderBy('createdAt', 'desc'), m.limit(max));
+    const snap = await m.getDocs(q);
+    return snap.docs.map((d) => d.data());
+  };
+
+  FB.deleteRun = async (id) => {
+    if (!(await FB.ready) || !FB.user) return;
+    await m.deleteDoc(m.doc(db, 'users', FB.user.uid, 'runs', id));
+  };
+
+  /** First attempt of the day goes on the board. Returns 'ok' | 'exists' | 'offline'. */
+  FB.submitDaily = async (dateKey, run) => {
+    if (!(await FB.ready) || !FB.user) return 'offline';
+    const ref = m.doc(db, 'daily', dateKey, 'entries', FB.user.uid);
+    const entry = {
+      uid: FB.user.uid,
+      displayName: (FB.profile && FB.profile.displayName) || displayNameFor(FB.user),
+      photoURL: (FB.profile && FB.profile.photoURL) || null,
+      finished: !!run.finished,
+      path: run.path.map((p) => p.title).slice(0, 500),
+      optimal: run.optimal ?? null,
+      runId: run.id,
+      createdAt: m.serverTimestamp(),
+    };
+    // Unfinished runs leave clicks/timeMs out entirely, so orderBy() skips them on the board.
+    if (run.finished) {
+      entry.clicks = run.clicks;
+      entry.timeMs = Math.round(run.timeMs);
+    }
+    try {
+      await m.runTransaction(db, async (tx) => {
+        const snap = await tx.get(ref);
+        if (snap.exists()) throw Object.assign(new Error('exists'), { code: 'exists' });
+        tx.set(ref, entry);
+      });
+      return 'ok';
+    } catch (e) {
+      if (e.code === 'exists') return 'exists';
+      console.warn('daily submit', e);
+      return 'error';
+    }
+  };
+
+  FB.myDailyEntry = async (dateKey) => {
+    if (!(await FB.ready) || !FB.user) return null;
+    const snap = await m.getDoc(m.doc(db, 'daily', dateKey, 'entries', FB.user.uid));
+    return snap.exists() ? snap.data() : null;
+  };
+
+  FB.leaderboard = async (dateKey, by = 'time', max = 100) => {
+    if (!(await FB.ready)) return null;
+    const col = m.collection(db, 'daily', dateKey, 'entries');
+    const q = by === 'clicks'
+      ? m.query(col, m.orderBy('clicks'), m.orderBy('timeMs'), m.limit(max))
+      : m.query(col, m.orderBy('timeMs'), m.limit(max));
+    const snap = await m.getDocs(q);
+    return snap.docs.map((d) => d.data());
+  };
+
+  FB.dailyCount = async (dateKey) => {
+    if (!(await FB.ready)) return null;
+    try {
+      const snap = await m.getCountFromServer(m.collection(db, 'daily', dateKey, 'entries'));
+      return snap.data().count;
+    } catch (e) {
+      return null;
+    }
+  };
+})(window);
+
+</script>
+  <script>
+/* Reusable UI bits: page cards, autocomplete, path rows, the distance chart, confetti. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const esc = U.esc;
+  const C = (WS.ui = {});
+
+  const thumbStyle = (url) => (url ? `style="background-image:url('${esc(url)}')"` : '');
+  const initial = (t) => esc((t || '?').trim()[0] || '?');
+
+  C.thumb = (info, cls = 'thumb') =>
+    `<div class="${cls}" ${thumbStyle(info && info.thumb)}>${info && info.thumb ? '' : initial(info && info.title)}</div>`;
+
+  /** Card for an article. info: {title, description, thumb, extract}. */
+  C.pageCard = (info, { label = '', target = false, big = false, link = false } = {}) => {
+    const tag = link ? 'a' : 'div';
+    const href = link ? ` href="${esc(U.wikiUrl(info.title))}" target="_blank" rel="noopener"` : '';
+    return `<${tag} class="page-card ${target ? 'target' : ''} ${big ? 'big' : ''}"${href}>
+      ${C.thumb(info)}
+      <div class="meta">
+        ${label ? `<div class="label">${esc(label)}</div>` : ''}
+        <div class="title">${esc(info.title)}</div>
+        ${info.description ? `<div class="desc">${esc(info.description)}</div>` : ''}
+      </div></${tag}>`;
+  };
+
+  C.pageCardSkeleton = (label, target) => `<div class="page-card ${target ? 'target' : ''}">
+      <div class="thumb skeleton"></div><div class="meta" style="flex:1">
+      <div class="label">${esc(label)}</div><div class="skeleton" style="height:18px;width:70%;margin:4px 0"></div>
+      <div class="skeleton" style="height:12px;width:90%"></div></div></div>`;
+
+  C.pathNode = (n, { visited = false, endpoint = false } = {}) =>
+    `<a class="path-node ${visited ? 'visited' : ''} ${endpoint ? 'endpoint' : ''}" href="${esc(U.wikiUrl(n.title))}" target="_blank" rel="noopener" title="${esc(n.description || n.title)}">
+      ${C.thumb(n)}<span class="t">${esc(n.title)}</span></a>`;
+
+  C.pathRow = (path, i, mine = new Set()) =>
+    `<div class="path-row"><span class="n">${i + 1}.</span>${path
+      .map((n, j) => C.pathNode(n, { visited: j > 0 && j < path.length - 1 && mine.has(n.title), endpoint: j === 0 || j === path.length - 1 }))
+      .join('<span class="path-arrow">→</span>')}</div>`;
+
+  C.avatar = (name, photo) =>
+    photo
+      ? `<span class="avatar" style="background-image:url('${esc(photo)}')"></span>`
+      : `<span class="avatar">${initial(name)}</span>`;
+
+  /** Article-title autocomplete on an <input>. onPick(title) fires on selection. */
+  C.autocomplete = (input, { onPick, onEnter } = {}) => {
+    const wrap = input.closest('.ac');
+    const list = document.createElement('div');
+    list.className = 'ac-list hidden';
+    wrap.appendChild(list);
+    let items = [];
+    let active = -1;
+    let ctrl;
+    const close = () => {
+      list.classList.add('hidden');
+      active = -1;
+    };
+    const draw = () => {
+      if (!items.length) return close();
+      list.innerHTML = items
+        .map((it, i) => `<div class="ac-item ${i === active ? 'on' : ''}" data-i="${i}">${C.thumb(it)}<div><div class="t">${esc(it.title)}</div><div class="d">${esc(it.description)}</div></div></div>`)
+        .join('');
+      list.classList.remove('hidden');
+    };
+    const pick = (it) => {
+      input.value = it.title;
+      close();
+      onPick && onPick(it.title, it);
+    };
+    const search = U.debounce(async () => {
+      ctrl && ctrl.abort();
+      ctrl = new AbortController();
+      const q = input.value;
+      if (!q.trim()) return close();
+      try {
+        items = await WS.wiki.search(q, { signal: ctrl.signal });
+        active = -1;
+        if (document.activeElement === input) draw();
+      } catch (e) { /* aborted or offline */ }
+    }, 180);
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.addEventListener('input', search);
+    input.addEventListener('keydown', (e) => {
+      const open = !list.classList.contains('hidden');
+      if (e.key === 'ArrowDown' && open) {
+        active = Math.min(items.length - 1, active + 1);
+        draw();
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp' && open) {
+        active = Math.max(0, active - 1);
+        draw();
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        if (open && active >= 0) {
+          pick(items[active]);
+          e.preventDefault();
+        } else {
+          close();
+          onEnter && onEnter();
+        }
+      } else if (e.key === 'Escape') close();
+    });
+    input.addEventListener('blur', () => setTimeout(close, 150));
+    list.addEventListener('mousedown', (e) => {
+      const el = e.target.closest('.ac-item');
+      if (el) {
+        e.preventDefault();
+        pick(items[+el.dataset.i]);
+      }
+    });
+  };
+
+  /**
+   * Step chart: distance-to-target after each click, against the ideal straight line.
+   * dists: array (null = unknown) aligned with the path.
+   */
+  C.distanceChart = (dists, labels) => {
+    const known = dists.filter((d) => d != null);
+    if (known.length < 2) return '';
+    const n = dists.length;
+    const maxD = Math.max(...known, 1);
+    const W = 520, H = 190, padL = 30, padR = 12, padT = 14, padB = 26;
+    const x = (i) => padL + (n === 1 ? 0 : (i * (W - padL - padR)) / (n - 1));
+    const y = (d) => padT + ((maxD - d) * (H - padT - padB)) / maxD;
+    let grid = '';
+    for (let d = 0; d <= maxD; d++) {
+      grid += `<line x1="${padL}" x2="${W - padR}" y1="${y(d)}" y2="${y(d)}" stroke="var(--border)" stroke-dasharray="${d ? '3 4' : ''}"/>`;
+      grid += `<text x="${padL - 8}" y="${y(d) + 4}" text-anchor="end" font-size="13" fill="var(--muted)" font-family="var(--mono)">${d}</text>`;
+    }
+    const d0 = dists[0];
+    const ideal = d0 != null ? `<line x1="${x(0)}" y1="${y(d0)}" x2="${x(Math.min(d0, n - 1))}" y2="${y(0)}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 5" opacity=".7"/>` : '';
+    let line = '';
+    let dots = '';
+    let prev = null;
+    dists.forEach((d, i) => {
+      if (d == null) return;
+      if (prev) line += `<line x1="${x(prev.i)}" y1="${y(prev.d)}" x2="${x(i)}" y2="${y(d)}" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>`;
+      const cls = i === 0 ? 'var(--muted)' : d === 0 ? 'var(--hot)' : prev && d < prev.d ? 'var(--good)' : prev && d > prev.d ? 'var(--bad)' : 'var(--warn)';
+      dots += `<circle cx="${x(i)}" cy="${y(d)}" r="7" fill="${cls}" stroke="var(--surface)" stroke-width="2"><title>${esc(labels[i])}: ${d} away</title></circle>`;
+      prev = { i, d };
+    });
+    const xl = dists.map((_, i) => (n <= 16 || i % Math.ceil(n / 16) === 0 ? `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--mono)">${i}</text>` : '')).join('');
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Distance to target after each click">${grid}${ideal}${line}${dots}${xl}</svg>
+      <div class="legend" style="justify-content:center;margin-top:6px">
+        <span><i style="background:var(--accent)"></i>Ideal pace</span><span><i style="background:var(--good)"></i>Closer</span>
+        <span><i style="background:var(--warn)"></i>Same</span><span><i style="background:var(--bad)"></i>Further</span></div></div>`;
+  };
+
+  C.confetti = () => {
+    if (root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = document.createElement('canvas');
+    cv.className = 'confetti';
+    document.body.appendChild(cv);
+    const ctx = cv.getContext('2d');
+    const dpr = root.devicePixelRatio || 1;
+    cv.width = innerWidth * dpr;
+    cv.height = innerHeight * dpr;
+    ctx.scale(dpr, dpr);
+    const colors = ['#3a63f0', '#ff6a1a', '#16955a', '#f0b429', '#d23f3f', '#8f5cf7'];
+    const ps = Array.from({ length: 160 }, () => ({
+      x: innerWidth / 2 + (Math.random() - 0.5) * 120,
+      y: innerHeight * 0.35,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -Math.random() * 14 - 4,
+      r: Math.random() * 6 + 4,
+      a: Math.random() * Math.PI,
+      va: (Math.random() - 0.5) * 0.3,
+      c: colors[(Math.random() * colors.length) | 0],
+    }));
+    const t0 = performance.now();
+    const frame = (t) => {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      for (const p of ps) {
+        p.vy += 0.35;
+        p.vx *= 0.99;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.a += p.va;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.a);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
+        ctx.restore();
+      }
+      if (t - t0 < 3200) requestAnimationFrame(frame);
+      else cv.remove();
+    };
+    requestAnimationFrame(frame);
+  };
+})(window);
+
+</script>
+  <script>
+/* Layered SVG graph of shortest paths. Every node on a shortest path has one fixed distance
+ * from the start, so the paths form a DAG we can draw in neat columns (one per degree). */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+
+  /**
+   * paths: [[{title}, ...], ...] all the same length.
+   * opts.mine: Set of titles the player visited; opts.mineEdges: Set of "a\u0001b" they clicked.
+   */
+  function render(container, paths, opts = {}) {
+    container.innerHTML = '';
+    if (!paths.length) return;
+    const mine = opts.mine || new Set();
+    const mineEdges = opts.mineEdges || new Set();
+    const L = paths[0].length;
+    const vertical = opts.vertical ?? container.clientWidth < 700;
+
+    // Build layers.
+    const nodes = new Map();
+    const layers = Array.from({ length: L }, () => []);
+    const edges = new Map();
+    for (const p of paths) {
+      p.forEach((n, i) => {
+        if (!nodes.has(n.title)) {
+          const node = { title: n.title, info: n, layer: i, parents: new Set(), children: new Set(), pos: 0 };
+          nodes.set(n.title, node);
+          layers[i].push(node);
+        }
+        if (i > 0) {
+          const a = nodes.get(p[i - 1].title);
+          const b = nodes.get(n.title);
+          a.children.add(b);
+          b.parents.add(a);
+          edges.set(a.title + '\u0001' + b.title, [a, b]);
+        }
+      });
+    }
+
+    // Barycenter ordering, a few down/up sweeps to reduce crossings.
+    layers.forEach((layer) => layer.forEach((n, i) => (n.pos = i)));
+    const sweep = (li, key) => {
+      const layer = layers[li];
+      for (const n of layer) {
+        const nb = [...n[key]];
+        n.bary = nb.length ? nb.reduce((s, x) => s + x.pos, 0) / nb.length : n.pos;
+      }
+      layer.sort((a, b) => a.bary - b.bary || a.title.localeCompare(b.title));
+      layer.forEach((n, i) => (n.pos = i));
+    };
+    for (let it = 0; it < 4; it++) {
+      for (let i = 1; i < L; i++) sweep(i, 'parents');
+      for (let i = L - 2; i >= 0; i--) sweep(i, 'children');
+    }
+
+    // Geometry.
+    const nodeW = vertical ? 132 : 164;
+    const nodeH = 30;
+    const along = vertical ? 78 : 210; // distance between layers
+    const across = vertical ? nodeW + 12 : nodeH + 14; // distance between siblings
+    const maxN = Math.max(...layers.map((l) => l.length));
+    const pad = 24;
+    const spanAcross = maxN * across;
+    const W = vertical ? spanAcross + pad * 2 : (L - 1) * along + nodeW + pad * 2;
+    const H = vertical ? (L - 1) * along + nodeH + pad * 2 + 16 : spanAcross + pad * 2 + 16;
+    const place = (n) => {
+      const layerLen = layers[n.layer].length;
+      const offset = (spanAcross - layerLen * across) / 2 + n.pos * across + across / 2;
+      if (vertical) return { x: pad + offset, y: pad + 16 + n.layer * along + nodeH / 2 };
+      return { x: pad + nodeW / 2 + n.layer * along, y: pad + 16 + offset };
+    };
+    nodes.forEach((n) => Object.assign(n, place(n)));
+
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Graph of ${paths.length} shortest paths`);
+
+    // Degree labels.
+    if (!vertical) {
+      for (let i = 0; i < L; i++) {
+        const t = document.createElementNS(NS, 'text');
+        t.setAttribute('class', 'g-layer-label');
+        t.setAttribute('x', pad + nodeW / 2 + i * along);
+        t.setAttribute('y', pad);
+        t.setAttribute('text-anchor', 'middle');
+        t.textContent = i === 0 ? 'START' : i === L - 1 ? 'TARGET' : `DEGREE ${i}`;
+        svg.appendChild(t);
+      }
+    }
+
+    const edgeEls = [];
+    const gEdges = document.createElementNS(NS, 'g');
+    for (const [key, [a, b]] of edges) {
+      const path = document.createElementNS(NS, 'path');
+      let d;
+      if (vertical) {
+        const y1 = a.y + nodeH / 2, y2 = b.y - nodeH / 2, my = (y1 + y2) / 2;
+        d = `M${a.x},${y1} C${a.x},${my} ${b.x},${my} ${b.x},${y2}`;
+      } else {
+        const x1 = a.x + nodeW / 2, x2 = b.x - nodeW / 2, mx = (x1 + x2) / 2;
+        d = `M${x1},${a.y} C${mx},${a.y} ${mx},${b.y} ${x2},${b.y}`;
+      }
+      path.setAttribute('d', d);
+      path.setAttribute('class', 'g-edge' + (mineEdges.has(key) ? ' mine' : ''));
+      path._a = a;
+      path._b = b;
+      gEdges.appendChild(path);
+      edgeEls.push(path);
+    }
+    svg.appendChild(gEdges);
+
+    const nodeEls = [];
+    for (const n of nodes.values()) {
+      const g = document.createElementNS(NS, 'g');
+      const cls = ['g-node'];
+      if (n.layer === 0 || n.layer === L - 1) cls.push('endpoint');
+      else if (mine.has(n.title)) cls.push('mine');
+      g.setAttribute('class', cls.join(' '));
+      g.setAttribute('transform', `translate(${n.x - nodeW / 2},${n.y - nodeH / 2})`);
+      g.setAttribute('tabindex', '0');
+      const rect = document.createElementNS(NS, 'rect');
+      rect.setAttribute('width', nodeW);
+      rect.setAttribute('height', nodeH);
+      rect.setAttribute('rx', 15);
+      const text = document.createElementNS(NS, 'text');
+      text.setAttribute('x', nodeW / 2);
+      text.setAttribute('y', nodeH / 2 + 4);
+      text.setAttribute('text-anchor', 'middle');
+      text.textContent = trunc(n.title, vertical ? 18 : 23);
+      const title = document.createElementNS(NS, 'title');
+      title.textContent = n.title + (n.info.description ? ' — ' + n.info.description : '');
+      g.append(rect, text, title);
+      g._node = n;
+      svg.appendChild(g);
+      nodeEls.push(g);
+    }
+
+    // Highlight every path through a node (tap on mobile, hover on desktop).
+    let pinned = null;
+    const highlight = (n) => {
+      if (!n) {
+        svg.classList.remove('g-dim');
+        nodeEls.forEach((g) => g.classList.remove('hl'));
+        edgeEls.forEach((e) => e.classList.remove('hl'));
+        return;
+      }
+      const on = new Set([n]);
+      const up = (x) => x.parents.forEach((p) => { if (!on.has(p)) { on.add(p); up(p); } });
+      const down = (x) => x.children.forEach((c) => { if (!on.has(c)) { on.add(c); down(c); } });
+      up(n);
+      down(n);
+      svg.classList.add('g-dim');
+      nodeEls.forEach((g) => g.classList.toggle('hl', on.has(g._node)));
+      edgeEls.forEach((e) => e.classList.toggle('hl', on.has(e._a) && on.has(e._b)));
+    };
+    nodeEls.forEach((g) => {
+      g.addEventListener('mouseenter', () => !pinned && highlight(g._node));
+      g.addEventListener('mouseleave', () => !pinned && highlight(null));
+      g.addEventListener('click', () => {
+        pinned = pinned === g._node ? null : g._node;
+        highlight(pinned);
+        opts.onNode && opts.onNode(g._node.info, !!pinned);
+      });
+      g.addEventListener('dblclick', () => window.open(U.wikiUrl(g._node.title), '_blank', 'noopener'));
+    });
+
+    container.appendChild(svg);
+  }
+
+  WS.graph = { render };
+})(window);
+
+</script>
+  <script>
+/* The game: pre-game lobby, the run itself, and the post-run comparison with Six Degrees. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const C = WS.ui;
+  const esc = U.esc;
+  const V = (WS.views = WS.views || {});
+
+  // ======================================================================
+  // Lobby: #/play?mode=daily|random|custom&start=..&target=..&date=..
+  // ======================================================================
+
+  V.play = async (el, params) => {
+    const mode = params.mode || (params.start ? 'custom' : 'random');
+    const date = params.date || U.todayKey();
+    let start = params.start;
+    let target = params.target;
+
+    if (mode === 'daily') [start, target] = WS.articles.dailyPair(date);
+    if (!start || !target) {
+      [start, target] = WS.articles.pickPair();
+      WS.app.replaceRoute('play', { mode, start, target });
+      return;
+    }
+
+    const isDaily = mode === 'daily';
+    const title = isDaily ? `Daily Challenge #${U.dailyNumber(date)}` : mode === 'random' ? 'Random Challenge' : 'Custom Challenge';
+    el.innerHTML = `
+      <div class="card" style="max-width:860px;margin:0 auto">
+        <div class="row" style="margin-bottom:6px">
+          <span class="pill ${isDaily ? 'pill-hot' : 'pill-accent'}">${isDaily ? '📅' : mode === 'random' ? '🎲' : '🎯'} ${esc(title)}</span>
+          <span id="rank-pill"></span>
+          <span class="spacer"></span>
+          <span id="par-pill"></span>
+        </div>
+        <h1 class="serif" style="margin:8px 0 14px;font-size:clamp(1.5rem,4vw,2.1rem)">Get from <span id="h-start">${esc(start)}</span> to <span id="h-target" style="color:var(--hot)">${esc(target)}</span></h1>
+        <div class="daily" id="cards">${C.pageCardSkeleton('Start')}<div class="arrow">→</div>${C.pageCardSkeleton('Target', true)}</div>
+        <p id="target-extract" class="muted small" style="margin:0 0 18px"></p>
+        <div class="row">
+          <button class="btn btn-hot btn-lg" id="go" disabled>▶ Start run</button>
+          ${mode === 'random' ? '<button class="btn" id="reroll">🎲 New pair</button>' : ''}
+          ${mode !== 'daily' ? '<button class="btn" id="swap">⇄ Swap</button>' : ''}
+          <button class="btn btn-ghost" id="share">🔗 Challenge a friend</button>
+        </div>
+        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. <b>Back</b> costs a click. The timer pauses while pages load, so slow internet doesn't hurt you. No searching!</p>
+      </div>`;
+
+    const $ = (s) => U.$(s, el);
+    const ctrl = new AbortController();
+
+    // Ranked?
+    let ranked = false;
+    if (isDaily) {
+      const local = WS.store.dailyAttempt(date);
+      ranked = date === U.todayKey() && !local;
+      const setPill = () =>
+        ($('#rank-pill').innerHTML = ranked
+          ? `<span class="pill pill-good">🏆 Ranked — first attempt counts</span>`
+          : `<span class="pill">Practice (unranked)</span>`);
+      setPill();
+      WS.fb.ready.then(async (ok) => {
+        if (!ok || !WS.fb.user || !ranked) return;
+        const entry = await WS.fb.myDailyEntry(date).catch(() => null);
+        if (entry) {
+          ranked = false;
+          setPill();
+        }
+      });
+    }
+
+    // Resolve + describe both pages.
+    let info;
+    try {
+      info = await WS.wiki.pageInfo([start, target], { extract: true, thumbSize: 240, signal: ctrl.signal });
+    } catch (e) {
+      $('#cards').innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e">📡</div>Couldn't reach Wikipedia: ${esc(e.message)}<br><br><button class="btn" onclick="location.reload()">Retry</button></div>`;
+      return;
+    }
+    const si = info.get(start);
+    const ti = info.get(target);
+    if (si.missing || ti.missing) {
+      $('#cards').innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e">🤷</div>“${esc(si.missing ? start : target)}” isn't a Wikipedia article.<br><br><a class="btn" href="#/">Back home</a></div>`;
+      return;
+    }
+    start = si.title;
+    target = ti.title;
+    $('#h-start').textContent = start;
+    $('#h-target').textContent = target;
+    $('#cards').innerHTML = `${C.pageCard(si, { label: 'Start', big: true })}<div class="arrow">→</div>${C.pageCard(ti, { label: 'Target', big: true, target: true })}`;
+    $('#target-extract').innerHTML = ti.extract ? `<b>About the target:</b> ${esc(ti.extract)}` : '';
+    if (start === target) {
+      $('#target-extract').innerHTML = '<b>Start and target are the same article.</b> Pick another pair.';
+      return;
+    }
+    const go = $('#go');
+    go.disabled = false;
+    go.focus();
+
+    // Par (optimal clicks) in the background; shown only if the setting is on.
+    const parPromise = WS.sdow.distance(start, target, { signal: ctrl.signal }).catch(() => null);
+    if (WS.store.settings().showPar) {
+      parPromise.then((d) => d && d.degrees != null && ($('#par-pill').innerHTML = `<span class="pill pill-warn" title="Shortest possible path, from Six Degrees of Wikipedia">⛳ Par ${d.degrees}</span>`));
+    }
+
+    go.onclick = () => {
+      if (isDaily && ranked) WS.store.setDailyAttempt(date, { id: 'pending', finished: false });
+      startRun(el, { mode, date: isDaily ? date : null, ranked, start, target, targetInfo: ti, startInfo: si });
+    };
+    const reroll = $('#reroll');
+    if (reroll) reroll.onclick = () => WS.app.go('play', { mode: 'random', ...pairObj(WS.articles.pickPair()) });
+    const swap = $('#swap');
+    if (swap) swap.onclick = () => WS.app.go('play', { mode, start: target, target: start });
+    $('#share').onclick = () => shareChallenge(start, target, isDaily ? date : null);
+
+    return () => ctrl.abort();
+  };
+
+  const pairObj = ([start, target]) => ({ start, target });
+
+  function challengeUrl(start, target) {
+    const base = /^https?:/.test(location.protocol) ? location.origin + location.pathname : 'https://wiki-speedruns.web.app/';
+    return `${base}#/play?mode=custom&start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}`;
+  }
+
+  async function shareChallenge(start, target, date, extra = '') {
+    const url = date ? `https://wiki-speedruns.web.app/#/play?mode=daily` : challengeUrl(start, target);
+    const text = `Can you get from ${start} to ${target} on Wikipedia?${extra}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'WikiSpeedruns challenge', text, url });
+        return;
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+      }
+    }
+    if (await U.copy(`${text}\n${url}`)) U.toast('Challenge link copied!', 'good');
+  }
+
+  // ======================================================================
+  // The run
+  // ======================================================================
+
+  function startRun(el, cfg) {
+    const s = {
+      ...cfg,
+      id: U.id(),
+      path: [{ title: cfg.start }],
+      stack: [cfg.start],
+      clicks: 0,
+      backs: 0,
+      hints: 0,
+      activeMs: 0,
+      segStart: null,
+      loading: false,
+      done: false,
+      navToken: 0,
+    };
+    const hideRefs = WS.store.settings().hideRefs;
+
+    document.body.classList.add('in-game');
+    WS.app.guard = () => s.done || confirm('Leave this run? It will not be saved.');
+    el.innerHTML = `
+      <div class="hud">
+        <div class="hud-main">
+          <button class="icon-btn" id="quit" title="Give up">✕</button>
+          <button class="hud-target" id="peek" title="About the target">
+            ${C.thumb(cfg.targetInfo)}
+            <div><div class="lbl">Target</div><div class="t">${esc(cfg.target)}</div></div>
+          </button>
+          <div class="hud-stat"><div class="v" id="clicks">0</div><div class="k">Clicks</div></div>
+          <div class="hud-stat"><div class="v" id="timer">0:00.0</div><div class="k">Time</div></div>
+          <button class="btn btn-sm" id="back" title="Go back (costs a click) — Alt+←" disabled>←<span class="hide-sm"> Back</span></button>
+          ${cfg.ranked ? '' : '<button class="btn btn-sm" id="hint" title="Ask Six Degrees for a hint">💡<span class="hide-sm"> Hint</span></button>'}
+        </div>
+        <div class="hud-crumbs" id="crumbs"></div>
+        <div class="loadbar" id="loadbar"></div>
+      </div>
+      <div class="article-wrap">
+        <h1 class="article-title" id="a-title"></h1>
+        <div class="redirect-note" id="a-redirect"></div>
+        <div class="wiki ${hideRefs ? 'ws-no-refs' : ''}" id="article"></div>
+      </div>`;
+    const $ = (sel) => U.$(sel, el);
+    const article = $('#article');
+
+    // ---- timer: runs only while an article is on screen ----
+    const now = () => performance.now();
+    const elapsed = () => s.activeMs + (s.segStart != null ? now() - s.segStart : 0);
+    const pause = () => {
+      if (s.segStart != null) s.activeMs += now() - s.segStart;
+      s.segStart = null;
+    };
+    const resume = () => {
+      if (s.segStart == null && !s.done) s.segStart = now();
+    };
+    const tick = setInterval(() => ($('#timer').textContent = U.fmtTime(elapsed())), 100);
+
+    const drawCrumbs = () => {
+      $('#clicks').textContent = s.clicks;
+      $('#back').disabled = s.stack.length < 2 || s.done;
+      const items = s.path.map((p, i) => `<span class="crumb ${i === s.path.length - 1 ? 'cur' : ''} ${p.back ? 'back' : ''}">${p.back ? '↩ ' : ''}${esc(p.title)}</span>`);
+      $('#crumbs').innerHTML = items.join('<span class="crumb-sep">›</span>');
+      const c = $('#crumbs');
+      c.scrollLeft = c.scrollWidth;
+    };
+
+    // ---- article loading ----
+    const loadbar = $('#loadbar');
+    async function show(title, { fragment, onLoaded } = {}) {
+      const token = ++s.navToken;
+      s.loading = true;
+      pause();
+      loadbar.className = 'loadbar';
+      void loadbar.offsetWidth;
+      loadbar.className = 'loadbar on';
+      let a;
+      try {
+        a = await WS.wiki.article(title);
+      } catch (e) {
+        if (token === s.navToken) {
+          s.loading = false;
+          loadbar.className = 'loadbar';
+          resume();
+          U.toast(e.code === 'missingtitle' ? `“${title}” doesn't exist.` : `Couldn't load “${title}”: ${e.message}`, 'bad');
+        }
+        return null;
+      }
+      if (token !== s.navToken || s.done) return null;
+      onLoaded && onLoaded(a);
+      $('#a-title').innerHTML = a.displayTitle;
+      $('#a-redirect').textContent = a.redirectedFrom ? `(Redirected from ${a.redirectedFrom})` : '';
+      article.replaceChildren(renderArticle(a.html));
+      loadbar.className = 'loadbar done';
+      s.loading = false;
+      if (fragment) {
+        const target = document.getElementById(fragment.replace(/ /g, '_'));
+        if (target) target.scrollIntoView();
+        else window.scrollTo(0, 0);
+      } else window.scrollTo(0, 0);
+      drawCrumbs();
+      if (U.normTitle(a.title) === U.normTitle(s.target)) finish(true);
+      else resume();
+      return a;
+    }
+
+    async function follow(title, fragment) {
+      if (s.loading || s.done) return;
+      const shown = await show(title, {
+        fragment,
+        // Count the click only once the page actually loads (a failed load is free).
+        onLoaded: (a) => {
+          s.clicks++;
+          s.path.push({ title: a.title });
+          s.stack.push(a.title);
+        },
+      });
+      return shown;
+    }
+
+    async function back() {
+      if (s.loading || s.done || s.stack.length < 2) return;
+      const prev = s.stack[s.stack.length - 2];
+      await show(prev, {
+        onLoaded: (a) => {
+          s.stack.pop();
+          s.clicks++;
+          s.backs++;
+          s.path.push({ title: a.title, back: true });
+        },
+      });
+    }
+
+    // ---- link handling ----
+    const activate = (a) => {
+      if (a.classList.contains('ws-anchor')) {
+        const id = decodeURIComponent((a.getAttribute('data-anchor') || '').replace(/^#/, ''));
+        const t = id && document.getElementById(id);
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (a.classList.contains('ws-link')) follow(a.dataset.title, a.dataset.frag || null);
+    };
+    article.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+      e.preventDefault();
+      activate(a);
+    });
+    article.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const a = e.target.closest && e.target.closest('a.ws-link, a.ws-anchor');
+        if (a) activate(a);
+      }
+    });
+    const onKey = (e) => {
+      if (e.target.matches && e.target.matches('input, textarea')) return;
+      if ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey)) {
+        e.preventDefault();
+        back();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    const onUnload = (e) => {
+      if (!s.done) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', onUnload);
+
+    $('#back').onclick = back;
+    $('#peek').onclick = () => {
+      const t = cfg.targetInfo;
+      U.modal(`<div class="label pill pill-hot">🎯 Target</div>
+        <h2 style="margin-top:10px">${esc(t.title)}</h2>
+        ${t.thumb ? `<img src="${esc(t.thumb)}" alt="" style="float:right;max-width:120px;border-radius:10px;margin:0 0 8px 12px">` : ''}
+        <p class="muted">${esc(t.description)}</p><p>${esc(t.extract)}</p>
+        <div style="clear:both"></div>
+        <p class="muted small">You're at <b>${esc(s.stack[s.stack.length - 1])}</b> after ${U.plural(s.clicks, 'click')}.</p>`);
+    };
+    $('#quit').onclick = () => {
+      if (s.done) return;
+      const m = U.modal(`<h2>Give up?</h2><p class="muted">Your run ends here. You'll still see the shortest paths and how close you got.</p>
+        <div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn" data-x>Keep going</button><button class="btn btn-hot" data-quit>Give up</button></div>`);
+      m.el.querySelector('[data-x]').onclick = m.close;
+      m.el.querySelector('[data-quit]').onclick = () => {
+        m.close();
+        finish(false);
+      };
+    };
+    const hintBtn = $('#hint');
+    if (hintBtn) hintBtn.onclick = () => hint();
+
+    async function hint() {
+      const cur = s.stack[s.stack.length - 1];
+      const box = document.createElement('div');
+      box.className = 'hint-box';
+      box.innerHTML = '<span class="spinner"></span> Asking Six Degrees of Wikipedia…';
+      el.appendChild(box);
+      const closeBox = () => box.remove();
+      try {
+        const d = await WS.sdow.distance(cur, s.target);
+        if (s.done) return closeBox();
+        s.hints++;
+        if (d.degrees == null) {
+          box.innerHTML = `No path from <b>${esc(cur)}</b> to the target in the Six Degrees database. Go back!`;
+        } else {
+          const links = U.$$('a.ws-link', article).filter((a) => d.next.includes(a.dataset.title));
+          links.forEach((a) => a.classList.add('ws-hint'));
+          const names = [...new Set(links.map((a) => a.dataset.title))];
+          box.innerHTML = `You're <b>${U.plural(d.degrees, 'click')}</b> away.<br>${
+            names.length
+              ? `Best link${names.length > 1 ? 's' : ''} here: ${names.slice(0, 3).map((n) => `<b>${esc(n)}</b>`).join(', ')}
+                 <div class="row" style="margin-top:8px"><button class="btn btn-sm btn-primary" data-show>Show me</button><button class="btn btn-sm" data-x>Close</button></div>`
+              : 'The best next links aren’t visible on this version of the page. <button class="btn btn-sm" data-x>Close</button>'
+          }`;
+          const show = box.querySelector('[data-show]');
+          if (show) show.onclick = () => links[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        const x = box.querySelector('[data-x]');
+        if (x) x.onclick = closeBox;
+        setTimeout(closeBox, 15000);
+      } catch (e) {
+        box.textContent = 'Hint unavailable: ' + e.message;
+        setTimeout(closeBox, 4000);
+      }
+    }
+
+    async function finish(won) {
+      if (s.done) return;
+      pause();
+      s.done = true;
+      clearInterval(tick);
+      $('#timer').textContent = U.fmtTime(s.activeMs);
+      drawCrumbs();
+      const run = {
+        v: 1,
+        id: s.id,
+        mode: s.mode,
+        date: s.date,
+        ranked: !!s.ranked && s.hints === 0,
+        start: s.start,
+        target: s.target,
+        path: s.path,
+        clicks: s.clicks,
+        backs: s.backs,
+        hints: s.hints,
+        timeMs: Math.round(s.activeMs),
+        finished: won,
+        optimal: null,
+        createdAt: Date.now(),
+      };
+      if (run.date && s.ranked) WS.store.setDailyAttempt(run.date, run);
+      await WS.store.saveRun(run);
+      if (run.date && run.ranked) {
+        // Optimal distance goes on the leaderboard entry if we already know it.
+        const d = await Promise.race([WS.sdow.distance(run.start, run.target).catch(() => null), U.sleep(2500)]);
+        if (d && d.degrees != null) run.optimal = d.degrees;
+        WS.fb.submitDaily(run.date, run).then((r) => {
+          if (r === 'ok') U.toast('Submitted to the daily leaderboard!', 'good');
+          else if (r === 'exists') U.toast('Already on today’s leaderboard — this one is practice.');
+        });
+      }
+      if (won) C.confetti();
+      WS.app.go('run', { id: run.id, fresh: '1' });
+    }
+
+    drawCrumbs();
+    show(cfg.start);
+
+    WS.app.addCleanup(() => {
+      clearInterval(tick);
+      WS.app.guard = null;
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('beforeunload', onUnload);
+      document.body.classList.remove('in-game');
+      s.navToken++;
+    });
+  }
+
+  /** Turn parser HTML into a safe, playable DOM fragment. */
+  function renderArticle(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, link, meta, iframe, object, embed, form, input, button, noscript, .mw-editsection, .navbar, #coordinates').forEach((n) => n.remove());
+    for (const n of doc.body.querySelectorAll('*')) {
+      for (const attr of [...n.attributes]) {
+        if (/^on/i.test(attr.name) || /^\s*javascript:/i.test(attr.value)) n.removeAttribute(attr.name);
+      }
+    }
+    for (const img of doc.querySelectorAll('img')) {
+      const src = img.getAttribute('src');
+      if (src && src.startsWith('//')) img.setAttribute('src', 'https:' + src);
+      const srcset = img.getAttribute('srcset');
+      if (srcset) img.setAttribute('srcset', srcset.replace(/(^|,\s*)\/\//g, '$1https://'));
+      img.setAttribute('loading', 'lazy');
+      img.setAttribute('decoding', 'async');
+    }
+    for (const a of doc.querySelectorAll('a')) {
+      const href = a.getAttribute('href');
+      a.removeAttribute('href');
+      a.removeAttribute('target');
+      if (href && href.startsWith('#')) {
+        a.className = 'ws-anchor';
+        a.setAttribute('data-anchor', href);
+        a.setAttribute('tabindex', '0');
+        continue;
+      }
+      const t = a.classList.contains('new') || a.classList.contains('extiw') || a.classList.contains('external') ? null : WS.wiki.linkTarget(href);
+      if (t) {
+        a.classList.add('ws-link');
+        a.dataset.title = t.title;
+        if (t.fragment) a.dataset.frag = t.fragment;
+        a.setAttribute('role', 'link');
+        a.setAttribute('tabindex', '0');
+      } else {
+        a.classList.add('ws-dead');
+      }
+    }
+    const frag = document.createDocumentFragment();
+    frag.append(...doc.body.childNodes);
+    return frag;
+  }
+  WS.game = { renderArticle };
+
+  // ======================================================================
+  // Results: #/run?id=..  — your path vs Six Degrees of Wikipedia
+  // ======================================================================
+
+  V.run = async (el, params) => {
+    let run = WS.store.getRun(params.id);
+    if (!run) {
+      el.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
+      await WS.fb.ready;
+      const all = await WS.store.allRuns();
+      run = all.find((r) => r.id === params.id);
+    }
+    if (!run) {
+      el.innerHTML = `<div class="empty"><div class="e">🔍</div>Run not found.<br><br><a class="btn" href="#/history">Your runs</a></div>`;
+      return;
+    }
+    const ctrl = new AbortController();
+    const fresh = params.fresh === '1';
+    const won = run.finished;
+    const titleLine = won
+      ? ['🏁', 'You made it!']
+      : ['🏳️', 'Run abandoned'];
+    const modeLabel = run.date ? `Daily #${U.dailyNumber(run.date)}` : run.mode === 'random' ? 'Random' : 'Custom';
+
+    el.innerHTML = `
+      <div class="win-banner">
+        <div class="big">${titleLine[0]}</div>
+        <h1>${titleLine[1]}</h1>
+        <div class="muted">${esc(run.start)} → ${esc(run.target)} · ${esc(modeLabel)}${run.ranked ? ' · <span class="pill pill-good">Ranked</span>' : ''}${run.hints ? ` · <span class="pill pill-warn">💡 ${run.hints} hint${run.hints > 1 ? 's' : ''}</span>` : ''}</div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="row" style="justify-content:center;margin-bottom:22px">
+        <button class="btn btn-hot" id="again">↻ Play again</button>
+        <a class="btn" href="#/play?mode=random">🎲 New random</a>
+        ${run.date ? `<a class="btn" href="#/leaderboard?date=${run.date}">🏆 Leaderboard</a>` : ''}
+        <button class="btn" id="share">📤 Share result</button>
+      </div>
+      <div class="grid grid-2" style="align-items:start">
+        <div class="card">
+          <h2>Your route</h2>
+          <div class="legend" style="margin-bottom:12px"><span>Number = clicks left to the target (per Six Degrees)</span></div>
+          <ol class="route" id="route"></ol>
+        </div>
+        <div class="grid">
+          <div class="card"><h2>Distance to target</h2><div id="chart"><div class="skeleton" style="height:180px"></div></div></div>
+          <div class="card" id="verdict-card"><h2>Verdict</h2><div id="verdict" class="muted"><span class="spinner"></span> Comparing with Six Degrees of Wikipedia…</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="row" style="margin-bottom:10px"><h2 style="margin:0">Six Degrees of Wikipedia: the shortest paths</h2><span class="spacer"></span><span id="sd-meta" class="muted small"></span></div>
+        <div id="sd"><div class="progress"><div></div></div></div>
+      </div>`;
+    const $ = (s) => U.$(s, el);
+
+    const drawStats = () => {
+      const eff = run.optimal && won ? Math.min(100, Math.round((run.optimal / run.clicks) * 100)) : null;
+      $('#stats').innerHTML = `
+        <div class="stat hot"><div class="k">Time</div><div class="v">${U.fmtTime(run.timeMs)}</div></div>
+        <div class="stat"><div class="k">Clicks</div><div class="v">${run.clicks}</div>${run.backs ? `<div class="sub">${U.plural(run.backs, 'back')}</div>` : ''}</div>
+        <div class="stat"><div class="k">Optimal</div><div class="v">${run.optimal ?? '<span class="spinner"></span>'}</div><div class="sub">clicks</div></div>
+        <div class="stat ${eff === 100 ? 'good' : ''}"><div class="k">Efficiency</div><div class="v">${eff != null ? eff + '%' : '–'}</div>${eff === 100 ? '<div class="sub">⭐ Perfect route</div>' : ''}</div>`;
+    };
+    drawStats();
+
+    $('#again').onclick = () => WS.app.go('play', { mode: run.date ? 'daily' : 'custom', date: run.date || undefined, start: run.date ? undefined : run.start, target: run.date ? undefined : run.target });
+
+    // ---- Route timeline with distances ----
+    const steps = run.path;
+    const dists = steps.map(() => undefined);
+    const nexts = steps.map(() => null);
+    const drawRoute = () => {
+      $('#route').innerHTML = steps
+        .map((p, i) => {
+          const d = dists[i];
+          const prev = i > 0 ? dists[i - 1] : undefined;
+          const isEnd = i === steps.length - 1 && won;
+          let cls = '';
+          if (isEnd) cls = 'done';
+          else if (i > 0 && d != null && prev != null) cls = d < prev ? 'closer' : d > prev ? 'further' : 'same';
+          const dot = isEnd ? '🏁' : d === undefined ? '<span class="spinner" style="width:14px;height:14px"></span>' : d === null ? '?' : d;
+          let note = '';
+          if (i < steps.length - 1 && nexts[i] && nexts[i].length && d) {
+            const took = steps[i + 1].title;
+            const good = nexts[i].includes(took) && !steps[i + 1].back;
+            note = good
+              ? `<div class="step-note">✓ Optimal click</div>`
+              : `<div class="step-note">Best from here: ${nexts[i].slice(0, 3).map((t) => `<b>${esc(t)}</b>`).join(', ')}${nexts[i].length > 3 ? ` +${nexts[i].length - 3} more` : ''}</div>`;
+          }
+          return `<li><div class="dot ${cls}">${dot}</div><div class="step-title"><a href="${esc(U.wikiUrl(p.title))}" target="_blank" rel="noopener">${esc(p.title)}</a>${p.back ? '<span class="back-tag">BACK</span>' : ''}${i === 0 ? '<span class="back-tag">START</span>' : ''}</div>${note}</li>`;
+        })
+        .join('');
+    };
+    drawRoute();
+
+    const drawChart = () => {
+      if (dists.some((d) => d === undefined)) return;
+      const html = C.distanceChart(dists.map((d, i) => (i === steps.length - 1 && won ? 0 : d)), steps.map((p) => p.title));
+      $('#chart').innerHTML = html || '<p class="muted">Not enough data from Six Degrees to chart this run.</p>';
+    };
+
+    const uniq = [...new Set(steps.map((p) => p.title))];
+    const byTitle = new Map();
+    U.pool(
+      uniq,
+      3,
+      async (t) => {
+        let r = null;
+        try {
+          r = await WS.sdow.distance(t, run.target, { signal: ctrl.signal });
+        } catch (e) {
+          if (e.name === 'AbortError') throw e;
+        }
+        byTitle.set(t, r);
+        steps.forEach((p, i) => {
+          if (p.title === t) {
+            dists[i] = r ? r.degrees : null;
+            nexts[i] = r ? r.next : null;
+          }
+        });
+        if (!ctrl.signal.aborted) drawRoute();
+      },
+      { signal: ctrl.signal }
+    )
+      .then(() => {
+        drawChart();
+        drawVerdict();
+      })
+      .catch(() => {});
+
+    // ---- Shortest paths from Six Degrees ----
+    let sd = null;
+    const mine = new Set(steps.map((p) => p.title));
+    const mineEdges = new Set();
+    for (let i = 1; i < steps.length; i++) mineEdges.add(steps[i - 1].title + '\u0001' + steps[i].title);
+
+    WS.sdow
+      .find(run.start, run.target, { engine: 'auto', signal: ctrl.signal })
+      .then(async (r) => {
+        sd = r;
+        if (r.degrees != null && run.optimal !== r.degrees) {
+          run.optimal = r.degrees;
+          WS.store.updateRun(run.id, { optimal: r.degrees });
+        }
+        drawStats();
+        drawShortest();
+        drawVerdict();
+      })
+      .catch((e) => {
+        if (e.name === 'AbortError') return;
+        $('#sd').innerHTML = `<p class="muted">Couldn't get shortest paths: ${esc(e.message)}</p>`;
+        $('#verdict').textContent = 'Six Degrees comparison unavailable right now.';
+        $('#stats .stat:nth-child(3) .v').textContent = '–';
+      });
+
+    function drawShortest() {
+      if (!sd) return;
+      if (!sd.paths.length) {
+        $('#sd').innerHTML = `<p class="muted">Six Degrees found no path from ${esc(run.start)} to ${esc(run.target)} in its snapshot.</p>`;
+        return;
+      }
+      const shown = sd.paths.slice(0, 40);
+      $('#sd-meta').innerHTML = `${U.plural(sd.totalPaths, 'path')} · ${U.plural(sd.degrees, 'degree')} · ${sd.engine === 'sdow' ? 'Six Degrees database' : 'live Wikipedia search'}`;
+      $('#sd').innerHTML = `
+        <div class="legend" style="margin-bottom:10px"><span><i style="background:var(--hot)"></i>Start / target</span><span><i style="background:var(--good)"></i>Pages you visited</span><span>Tap a node to trace its paths · double-click to open</span></div>
+        <div class="graph-wrap" id="graph" style="max-height:520px"></div>
+        ${shown.length < sd.totalPaths ? `<p class="muted tiny">Graph shows ${shown.length} of ${sd.totalPaths} paths.</p>` : ''}
+        <h3 style="margin:18px 0 10px;font-size:1rem">Paths</h3>
+        <div class="paths-list" id="plist"></div>
+        ${sd.paths.length > 6 ? `<button class="btn btn-sm" id="more" style="margin-top:10px">Show all ${sd.paths.length}</button>` : ''}
+        <div style="margin-top:14px"><a class="btn btn-sm" href="#/six-degrees?from=${encodeURIComponent(run.start)}&to=${encodeURIComponent(run.target)}">Open in Six Degrees explorer →</a></div>`;
+      WS.graph.render($('#graph'), shown, { mine, mineEdges });
+      const list = (n) => ($('#plist').innerHTML = sd.paths.slice(0, n).map((p, i) => C.pathRow(p, i, mine)).join(''));
+      list(6);
+      const more = $('#more');
+      if (more) more.onclick = () => (list(sd.paths.length), more.remove());
+    }
+
+    function drawVerdict() {
+      if (!sd || dists.some((d) => d === undefined)) return;
+      const opt = sd.degrees;
+      const v = $('#verdict');
+      v.classList.remove('muted');
+      if (opt == null) {
+        v.innerHTML = 'Six Degrees has no route for this pair — impressive if you found one!';
+        return;
+      }
+      let html = '';
+      if (won) {
+        const extra = run.clicks - opt;
+        if (extra < 0) html += `<p>🤯 <b>You beat Six Degrees of Wikipedia</b> by ${U.plural(-extra, 'click')}! (Its database is a snapshot, so you used links added since.)</p>`;
+        else if (extra === 0) html += `<p>⭐ <b>Perfect!</b> You found a shortest possible path — ${U.plural(opt, 'click')}.</p>`;
+        else html += `<p>You took <b>${U.plural(extra, 'extra click')}</b> over the optimal ${opt}.</p>`;
+      } else {
+        const last = dists[dists.length - 1];
+        html += `<p>You stopped <b>${last != null ? U.plural(last, 'click') : 'an unknown distance'}</b> from ${esc(run.target)}. The shortest route was ${U.plural(opt, 'click')}.</p>`;
+      }
+      // First wrong turn.
+      let wrong = -1;
+      for (let i = 0; i < steps.length - 1; i++) {
+        if (dists[i] != null && dists[i + 1] != null && (dists[i + 1] >= dists[i] || steps[i + 1].back)) {
+          wrong = i;
+          break;
+        }
+      }
+      if (wrong >= 0 && nexts[wrong] && nexts[wrong].length) {
+        const left = Math.max(0, dists[wrong] - 1);
+        html += `<p class="small">Your first wrong turn was on <b>${esc(steps[wrong].title)}</b> → ${esc(steps[wrong + 1].title)}. ${
+          left === 0
+            ? `<b>${esc(nexts[wrong][0])}</b> was right there — one click would have won it.`
+            : `<b>${esc(nexts[wrong][0])}</b> would have left you ${U.plural(left, 'click')} from the finish.`
+        }</p>`;
+      } else if (won && run.clicks > opt) {
+        html += '<p class="small">Every click moved you closer — the extra length came from the start.</p>';
+      }
+      const closer = steps.slice(1).filter((p, i) => dists[i] != null && dists[i + 1] != null && dists[i + 1] < dists[i]).length;
+      html += `<p class="small muted">${closer} of ${run.clicks} clicks moved you closer.</p>`;
+      if (run.date && run.ranked && won) html += `<p class="small" id="rank-line"><span class="spinner"></span></p>`;
+      v.innerHTML = html;
+      if (run.date && run.ranked && won) rankLine();
+    }
+
+    async function rankLine() {
+      const line = $('#rank-line');
+      const ok = await WS.fb.ready;
+      if (!ok) return line && line.remove();
+      if (!WS.fb.user) {
+        line.innerHTML = `<a href="#/account">Sign in</a> to put runs like this on the daily leaderboard.`;
+        return;
+      }
+      try {
+        await U.sleep(800); // give the submission a moment to land
+        const board = await WS.fb.leaderboard(run.date, 'time', 500);
+        const i = board.findIndex((e) => e.uid === WS.fb.user.uid);
+        line.innerHTML = i >= 0 ? `🏆 You're <b>#${i + 1}</b> of ${board.length} on today's leaderboard.` : 'Leaderboard updating…';
+      } catch (e) {
+        line.remove();
+      }
+    }
+
+    $('#share').onclick = async () => {
+      const squares = steps
+        .slice(1)
+        .map((p, i) => {
+          if (p.back) return '⬅️';
+          if (i === steps.length - 2 && won) return '🏁';
+          const a = dists[i], b = dists[i + 1];
+          if (a == null || b == null) return '⬜';
+          return b < a ? '🟩' : b > a ? '🟥' : '🟨';
+        })
+        .join('');
+      const head = run.date ? `WikiSpeedruns Daily #${U.dailyNumber(run.date)}` : 'WikiSpeedruns';
+      const text = `${head}\n${run.start} → ${run.target}\n${won ? `⏱ ${U.fmtTime(run.timeMs)} · 🖱 ${run.clicks} clicks${run.optimal ? ` (par ${run.optimal})` : ''}` : `🏳️ gave up after ${run.clicks} clicks`}\n${squares}`;
+      const url = run.date ? 'https://wiki-speedruns.web.app/#/play?mode=daily' : challengeUrl(run.start, run.target);
+      const m = U.modal(`<h2>Share your run</h2><div class="share-box">${esc(text)}\n${esc(url)}</div>
+        <div class="row" style="margin-top:14px;justify-content:flex-end">${navigator.share ? '<button class="btn" data-native>Share…</button>' : ''}<button class="btn btn-primary" data-copy>Copy</button></div>`);
+      m.el.querySelector('[data-copy]').onclick = async () => (await U.copy(`${text}\n${url}`)) && U.toast('Copied!', 'good');
+      const nat = m.el.querySelector('[data-native]');
+      if (nat) nat.onclick = () => navigator.share({ text, url }).catch(() => {});
+    };
+
+    if (fresh) history.replaceState(null, '', `#/run?id=${encodeURIComponent(run.id)}`);
+    return () => ctrl.abort();
+  };
+})(window);
+
+</script>
+  <script>
+/* Home, Six Degrees explorer, history, leaderboard, account/settings, about. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const C = WS.ui;
+  const esc = U.esc;
+  const V = (WS.views = WS.views || {});
+
+  // ======================================================================
+  // Home
+  // ======================================================================
+  V.home = async (el) => {
+    const today = U.todayKey();
+    const [ds, dt] = WS.articles.dailyPair(today);
+    const attempt = WS.store.dailyAttempt(today);
+    const streak = WS.store.streak();
+    const recent = WS.store.localRuns().slice(0, 4);
+
+    el.innerHTML = `
+      <section class="hero">
+        <h1>Race through Wikipedia.</h1>
+        <p>Get from one article to another using only the links inside them — as fast as you can. Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</p>
+        <div class="row"><span class="pill pill-hot">📅 Daily Challenge #${U.dailyNumber(today)}</span>${streak ? `<span class="pill pill-warn">🔥 ${streak}-day streak</span>` : ''}<span class="pill" id="players"></span></div>
+        <div class="daily" id="daily-cards">${C.pageCardSkeleton('Start')}<div class="arrow">→</div>${C.pageCardSkeleton('Target', true)}</div>
+        <div class="row" id="daily-actions">
+          ${
+            attempt && attempt.runId && attempt.runId !== 'pending'
+              ? `<span class="pill ${attempt.finished ? 'pill-good' : ''}">${attempt.finished ? `✅ Done in ${U.fmtTime(attempt.timeMs)} · ${U.plural(attempt.clicks, 'click')}` : '🏳️ Attempted'}</span>
+                 <a class="btn" href="#/run?id=${encodeURIComponent(attempt.runId)}">Your result</a>
+                 <a class="btn" href="#/leaderboard">🏆 Leaderboard</a>
+                 <a class="btn btn-ghost" href="#/play?mode=daily">Practice again</a>`
+              : `<a class="btn btn-hot btn-lg" href="#/play?mode=daily">▶ Play today's challenge</a><a class="btn btn-ghost" href="#/leaderboard">🏆 Leaderboard</a>`
+          }
+        </div>
+      </section>
+
+      <h2 class="section-title" style="margin-top:28px">More ways to play</h2>
+      <div class="grid grid-3">
+        <div class="card mode-card"><div class="emoji">🎲</div><h3>Random</h3><p>Two well-known articles from different corners of Wikipedia.</p><a class="btn btn-primary" href="#/play?mode=random">Play random</a></div>
+        <div class="card mode-card"><div class="emoji">🌀</div><h3>Chaos mode</h3><p>Truly random articles. Obscure villages, forgotten footballers, 18th-century ships. Good luck.</p><button class="btn" id="chaos">Roll the dice</button></div>
+        <div class="card mode-card"><div class="emoji">🔭</div><h3>Six Degrees explorer</h3><p>Find every shortest path between any two articles and see them as a graph.</p><a class="btn" href="#/six-degrees">Open explorer</a></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>🎯 Custom challenge</h2>
+        <div class="sd-form">
+          <div><label class="field">Start</label><div class="ac"><input class="input" id="c-start" placeholder="e.g. Pizza"></div></div>
+          <button class="icon-btn swap" id="c-swap" title="Swap">⇄</button>
+          <div><label class="field">Target</label><div class="ac"><input class="input" id="c-target" placeholder="e.g. Albert Einstein"></div></div>
+          <button class="btn btn-primary" id="c-go">Play</button>
+        </div>
+      </div>
+
+      ${
+        recent.length
+          ? `<div class="row" style="margin:28px 0 10px"><h2 class="section-title" style="margin:0">Recent runs</h2><span class="spacer"></span><a href="#/history" class="small">All runs →</a></div>
+             <div class="grid grid-2">${recent.map(runItem).join('')}</div>`
+          : ''
+      }`;
+
+    const $ = (s) => U.$(s, el);
+    WS.wiki.pageInfo([ds, dt]).then((info) => {
+      const cards = $('#daily-cards');
+      if (cards) cards.innerHTML = `${C.pageCard(info.get(ds), { label: 'Start' })}<div class="arrow">→</div>${C.pageCard(info.get(dt), { label: 'Target', target: true })}`;
+    }).catch(() => {
+      const cards = $('#daily-cards');
+      if (cards) cards.innerHTML = `${C.pageCard({ title: ds }, { label: 'Start' })}<div class="arrow">→</div>${C.pageCard({ title: dt }, { label: 'Target', target: true })}`;
+    });
+    WS.fb.ready.then(async (ok) => {
+      if (!ok) return;
+      const n = await WS.fb.dailyCount(today);
+      const p = $('#players');
+      if (p && n != null) p.textContent = `👥 ${U.plural(n, 'player')} today`;
+      else if (p) p.remove();
+    });
+    if (!WS.fb.enabled) $('#players').remove();
+
+    $('#chaos').onclick = async (e) => {
+      e.target.disabled = true;
+      e.target.innerHTML = '<span class="spinner"></span>';
+      try {
+        const a = await WS.wiki.randomArticle();
+        const b = await WS.wiki.randomArticle({ exclude: [a] });
+        WS.app.go('play', { mode: 'custom', start: a, target: b });
+      } catch (err) {
+        U.toast(err.message, 'bad');
+        e.target.disabled = false;
+        e.target.textContent = 'Roll the dice';
+      }
+    };
+    const cs = $('#c-start'), ct = $('#c-target');
+    const go = () => {
+      if (!cs.value.trim() || !ct.value.trim()) return U.toast('Pick both articles first.');
+      WS.app.go('play', { mode: 'custom', start: cs.value.trim(), target: ct.value.trim() });
+    };
+    C.autocomplete(cs, { onPick: () => ct.focus(), onEnter: () => ct.focus() });
+    C.autocomplete(ct, { onEnter: go });
+    $('#c-swap').onclick = () => ([cs.value, ct.value] = [ct.value, cs.value]);
+    $('#c-go').onclick = go;
+  };
+
+  function runItem(r) {
+    const eff = r.optimal && r.finished ? (r.clicks <= r.optimal ? '<span class="pill pill-good">⭐ Perfect</span>' : `<span class="pill">par ${r.optimal}</span>`) : '';
+    return `<a class="run-item" href="#/run?id=${encodeURIComponent(r.id)}">
+      <div style="font-size:1.5rem">${r.finished ? (r.date ? '📅' : '🏁') : '🏳️'}</div>
+      <div style="flex:1">
+        <div class="route-t">${esc(r.start)} → ${esc(r.target)}</div>
+        <div class="muted small">${r.finished ? `${U.fmtTime(r.timeMs)} · ${U.plural(r.clicks, 'click')}` : `Gave up after ${U.plural(r.clicks, 'click')}`} · ${U.relTime(r.createdAt)}</div>
+      </div>${eff}</a>`;
+  }
+
+  // ======================================================================
+  // Six Degrees explorer: #/six-degrees?from=..&to=..&engine=auto|sdow|live
+  // ======================================================================
+  V.sixDegrees = async (el, params) => {
+    const engine = params.engine || 'auto';
+    el.innerHTML = `
+      <div style="margin-bottom:16px">
+        <h1 class="serif" style="margin:0 0 4px;font-size:clamp(1.7rem,4vw,2.4rem)">Six Degrees of Wikipedia</h1>
+        <p class="muted" style="margin:0">Find the shortest paths between any two articles. Built on <a href="https://github.com/jwngr/sdow" target="_blank" rel="noopener">jwngr/sdow</a>'s bi-directional breadth-first search.</p>
+      </div>
+      <div class="card">
+        <div class="sd-form">
+          <div><label class="field">From</label><div class="ac"><input class="input" id="from" placeholder="Start article" value="${esc(params.from || '')}"></div></div>
+          <button class="icon-btn swap" id="swap" title="Swap">⇄</button>
+          <div><label class="field">To</label><div class="ac"><input class="input" id="to" placeholder="Target article" value="${esc(params.to || '')}"></div></div>
+          <button class="btn btn-primary" id="go">Find paths</button>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <span class="small muted">Engine</span>
+          <div class="seg" id="engine">
+            <button data-e="auto" title="Six Degrees database, falls back to live search">Auto</button>
+            <button data-e="sdow" title="Six Degrees of Wikipedia API (full link-graph snapshot)">Database</button>
+            <button data-e="live" title="Runs the search in your browser against live Wikipedia">Live</button>
+          </div>
+          <span class="spacer"></span>
+          <button class="btn btn-sm btn-ghost" id="surprise">🎲 Surprise me</button>
+        </div>
+      </div>
+      <div id="out" style="margin-top:16px"></div>`;
+    const $ = (s) => U.$(s, el);
+    const from = $('#from'), to = $('#to'), out = $('#out');
+    let eng = engine;
+    const drawEngine = () => U.$$('#engine button', el).forEach((b) => b.classList.toggle('on', b.dataset.e === eng));
+    drawEngine();
+    U.$$('#engine button', el).forEach((b) => (b.onclick = () => ((eng = b.dataset.e), drawEngine())));
+
+    const submit = () => {
+      const f = from.value.trim(), t = to.value.trim();
+      if (!f || !t) return U.toast('Enter two articles.');
+      WS.app.go('six-degrees', { from: f, to: t, engine: eng === 'auto' ? undefined : eng });
+    };
+    C.autocomplete(from, { onPick: () => to.focus(), onEnter: () => to.focus() });
+    C.autocomplete(to, { onEnter: submit });
+    $('#go').onclick = submit;
+    $('#swap').onclick = () => ([from.value, to.value] = [to.value, from.value]);
+    $('#surprise').onclick = () => {
+      const [a, b] = WS.articles.pickPair();
+      WS.app.go('six-degrees', { from: a, to: b, engine: eng === 'auto' ? undefined : eng });
+    };
+
+    if (!params.from || !params.to) {
+      out.innerHTML = `<div class="card prose">
+        <h2 style="margin-top:0">How it works</h2>
+        <p>Wikipedia is a giant directed graph: articles are nodes, links are edges. To find the shortest route, the search grows two frontiers at once — forward from the start (pages it links to) and backward from the target (pages that link to it) — always expanding whichever side is cheaper. The moment the frontiers touch, every page where they meet gives a shortest path.</p>
+        <p><b>Database</b> asks the Six Degrees of Wikipedia server, which runs this search over a full snapshot of the ~6 million article link graph in milliseconds. <b>Live</b> runs the same algorithm right here in your browser against the live Wikipedia API — slower, but it knows about articles and links added since the snapshot.</p>
+      </div>`;
+      return;
+    }
+
+    const ctrl = new AbortController();
+    const t0 = performance.now();
+    out.innerHTML = `<div class="card"><div class="row" style="margin-bottom:10px"><span class="spinner"></span><b id="status">Searching…</b><span class="spacer"></span><button class="btn btn-sm" id="cancel">Cancel</button></div><div class="progress"><div></div></div><p class="muted small" id="detail" style="margin:10px 0 0"></p></div>`;
+    U.$('#cancel', out).onclick = () => ctrl.abort();
+    const status = U.$('#status', out), detail = U.$('#detail', out);
+    const onProgress = (p) => {
+      if (p.fallback) {
+        status.textContent = 'Not in the Six Degrees database — searching live Wikipedia…';
+        detail.textContent = p.reason;
+        return;
+      }
+      status.textContent = `Searching live Wikipedia · depth ${p.depth} · ${p.direction}`;
+      detail.textContent = `${p.explored.toLocaleString()} pages expanded · ${(p.requests || 0).toLocaleString()} API requests · frontier ${p.frontier.toLocaleString()} pages · ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+    };
+
+    let r;
+    try {
+      r = await WS.sdow.find(params.from, params.to, { engine, signal: ctrl.signal, onProgress });
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        out.innerHTML = `<div class="card muted">Search cancelled.</div>`;
+        return;
+      }
+      out.innerHTML = `<div class="card"><b>Search failed.</b> <span class="muted">${esc(e.message)}</span>
+        ${engine !== 'live' ? `<div style="margin-top:12px"><a class="btn btn-sm" href="#/six-degrees?from=${encodeURIComponent(params.from)}&to=${encodeURIComponent(params.to)}&engine=live">Try the live engine</a></div>` : ''}</div>`;
+      return;
+    }
+    from.value = r.source;
+    to.value = r.target;
+    const secs = (r.ms / 1000).toFixed(r.ms < 1000 ? 2 : 1);
+    const engineLabel = r.engine === 'sdow' ? 'Six Degrees database' : `live Wikipedia (${(r.requests || 0).toLocaleString()} requests)`;
+    if (!r.paths.length) {
+      out.innerHTML = `<div class="card"><p class="sd-headline">${r.gaveUp ? 'Gave up' : 'No path'} from <b>${esc(r.source)}</b> to <b>${esc(r.target)}</b>.</p>
+        <p class="muted small">${r.gaveUp ? 'The live search hit its request budget before the frontiers met. The database engine can search much deeper.' : 'Some pages simply cannot reach others — e.g. pages with no outgoing links.'} · ${engineLabel} · ${secs}s</p></div>`;
+      return;
+    }
+    const mkPaths = (n) => r.paths.slice(0, n).map((p, i) => C.pathRow(p, i)).join('');
+    out.innerHTML = `
+      <div class="card">
+        <p class="sd-headline">Found <b>${U.plural(r.totalPaths, 'path')}</b> with <b>${U.plural(r.degrees, 'degree')}</b> of separation from <b>${esc(r.source)}</b> to <b>${esc(r.target)}</b>.</p>
+        <p class="muted small" style="margin:6px 0 14px">${engineLabel} · ${secs}s${r.approximate ? ' · <span class="pill pill-warn" title="Some very large link lists were truncated">approximate</span>' : ''}${r.fallbackReason ? ` · fell back to live search` : ''}</p>
+        <div class="row" style="margin-bottom:14px">
+          <a class="btn btn-hot" href="#/play?mode=custom&start=${encodeURIComponent(r.source)}&target=${encodeURIComponent(r.target)}">▶ Race this pair</a>
+          <a class="btn" href="#/six-degrees?from=${encodeURIComponent(r.target)}&to=${encodeURIComponent(r.source)}${engine !== 'auto' ? '&engine=' + engine : ''}">⇄ Reverse</a>
+          ${r.engine === 'sdow' ? `<a class="btn btn-ghost" href="#/six-degrees?from=${encodeURIComponent(r.source)}&to=${encodeURIComponent(r.target)}&engine=live">Re-run live</a>` : ''}
+        </div>
+        <div class="graph-wrap" id="graph" style="max-height:560px"></div>
+        ${r.paths.length > 40 ? `<p class="muted tiny">Graph shows 40 of ${r.paths.length} paths.</p>` : ''}
+      </div>
+      <div class="card" style="margin-top:16px"><h2>Paths</h2><div class="paths-list" id="plist">${mkPaths(20)}</div>
+      ${r.paths.length > 20 ? `<button class="btn btn-sm" id="more" style="margin-top:10px">Show all ${r.paths.length}</button>` : ''}</div>`;
+    WS.graph.render(U.$('#graph', out), r.paths.slice(0, 40));
+    const more = U.$('#more', out);
+    if (more) more.onclick = () => ((U.$('#plist', out).innerHTML = mkPaths(r.paths.length)), more.remove());
+    return () => ctrl.abort();
+  };
+
+  // ======================================================================
+  // History
+  // ======================================================================
+  V.history = async (el, params) => {
+    const filter = params.filter || 'all';
+    el.innerHTML = `<h1 class="serif" style="margin:0 0 14px">Your runs</h1><div id="h"><div class="empty"><span class="spinner"></span></div></div>`;
+    await WS.fb.ready;
+    const runs = await WS.store.allRuns();
+    const st = WS.store.stats(runs);
+    const shown = runs.filter((r) => (filter === 'daily' ? r.date : filter === 'finished' ? r.finished : true));
+    U.$('#h', el).innerHTML = `
+      <div class="stats">
+        <div class="stat"><div class="k">Played</div><div class="v">${st.played}</div></div>
+        <div class="stat"><div class="k">Finished</div><div class="v">${st.finished}</div></div>
+        <div class="stat hot"><div class="k">Best time</div><div class="v">${U.fmtTime(st.bestTime)}</div></div>
+        <div class="stat"><div class="k">Avg clicks</div><div class="v">${st.avgClicks != null ? st.avgClicks.toFixed(1) : '–'}</div></div>
+        <div class="stat good"><div class="k">Perfect runs</div><div class="v">${st.perfect}</div></div>
+        <div class="stat"><div class="k">Efficiency</div><div class="v">${st.efficiency != null ? Math.round(st.efficiency * 100) + '%' : '–'}</div></div>
+      </div>
+      <div class="row" style="margin-bottom:12px">
+        <div class="seg">${['all', 'daily', 'finished'].map((f) => `<button class="${f === filter ? 'on' : ''}" data-f="${f}">${f[0].toUpperCase() + f.slice(1)}</button>`).join('')}</div>
+        <span class="spacer"></span>
+        <span class="muted small">${WS.fb.user ? '☁️ Synced to your account' : '💾 Saved on this device — <a href="#/account">sign in</a> to sync'}</span>
+      </div>
+      ${shown.length ? `<div class="grid grid-2">${shown.map(runItem).join('')}</div>` : `<div class="empty"><div class="e">🏃</div>No runs yet.<br><br><a class="btn btn-hot" href="#/play?mode=daily">Play the daily challenge</a></div>`}`;
+    U.$$('.seg button', el).forEach((b) => (b.onclick = () => WS.app.go('history', { filter: b.dataset.f === 'all' ? undefined : b.dataset.f })));
+  };
+
+  // ======================================================================
+  // Leaderboard: #/leaderboard?date=YYYY-MM-DD&by=time|clicks
+  // ======================================================================
+  V.leaderboard = async (el, params) => {
+    const today = U.todayKey();
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(params.date || '') ? params.date : today;
+    const by = params.by === 'clicks' ? 'clicks' : 'time';
+    const [s, t] = WS.articles.dailyPair(date);
+    const shift = (n) => {
+      const d = new Date(date + 'T00:00:00Z');
+      d.setUTCDate(d.getUTCDate() + n);
+      return U.todayKey(d);
+    };
+    const prev = shift(-1), next = shift(1);
+    el.innerHTML = `
+      <div class="row" style="margin-bottom:14px">
+        <a class="icon-btn" href="#/leaderboard?date=${prev}${by === 'clicks' ? '&by=clicks' : ''}" title="Previous day">◀</a>
+        <div><h1 class="serif" style="margin:0;font-size:1.7rem">Daily #${U.dailyNumber(date)} leaderboard</h1>
+          <div class="muted small">${new Date(date + 'T12:00:00Z').toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div></div>
+        ${next <= today ? `<a class="icon-btn" href="#/leaderboard?date=${next}${by === 'clicks' ? '&by=clicks' : ''}" title="Next day">▶</a>` : ''}
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="row"><b class="serif" style="font-size:1.15rem">${esc(s)} → ${esc(t)}</b><span class="spacer"></span>
+          <a class="btn btn-sm ${date === today ? 'btn-hot' : ''}" href="#/play?mode=daily&date=${date}">${date === today ? '▶ Play' : 'Practice'}</a>
+          <a class="btn btn-sm" href="#/six-degrees?from=${encodeURIComponent(s)}&to=${encodeURIComponent(t)}">🔭 Shortest paths</a></div>
+      </div>
+      <div class="row" style="margin-bottom:12px"><div class="seg">
+        <button class="${by === 'time' ? 'on' : ''}" data-by="time">⏱ Fastest</button>
+        <button class="${by === 'clicks' ? 'on' : ''}" data-by="clicks">🖱 Fewest clicks</button></div></div>
+      <div class="card" id="lb" style="padding:8px 12px"><div class="empty"><span class="spinner"></span></div></div>`;
+    U.$$('[data-by]', el).forEach((b) => (b.onclick = () => WS.app.go('leaderboard', { date, by: b.dataset.by === 'time' ? undefined : 'clicks' })));
+    const lb = U.$('#lb', el);
+    const ok = await WS.fb.ready;
+    if (!ok) {
+      lb.innerHTML = `<div class="empty"><div class="e">🔌</div>Leaderboards need the online version.<br><span class="small">Play at <a href="https://wiki-speedruns.web.app">wiki-speedruns.web.app</a>.</span></div>`;
+      return;
+    }
+    let rows;
+    try {
+      rows = await WS.fb.leaderboard(date, by, 100);
+    } catch (e) {
+      lb.innerHTML = `<div class="empty">Couldn't load the leaderboard: ${esc(e.message)}</div>`;
+      return;
+    }
+    if (!rows.length) {
+      lb.innerHTML = `<div class="empty"><div class="e">🏁</div>No finishers yet. Be the first!</div>`;
+      return;
+    }
+    const me = WS.fb.user && WS.fb.user.uid;
+    const medal = (i) => ['🥇', '🥈', '🥉'][i] || i + 1;
+    lb.innerHTML = `<table class="table"><thead><tr><th>#</th><th>Player</th><th class="num">Time</th><th class="num">Clicks</th></tr></thead><tbody>
+      ${rows
+        .map(
+          (r, i) => `<tr class="${r.uid === me ? 'me' : ''}" title="${esc((r.path || []).join(' → '))}">
+            <td class="rank">${medal(i)}</td>
+            <td><div class="row" style="gap:8px;flex-wrap:nowrap">${C.avatar(r.displayName, r.photoURL)}<span>${esc(r.displayName)}</span>${r.optimal && r.clicks <= r.optimal ? '<span title="Shortest possible path">⭐</span>' : ''}</div></td>
+            <td class="num">${U.fmtTime(r.timeMs)}</td><td class="num">${r.clicks}</td></tr>`
+        )
+        .join('')}</tbody></table>
+      ${me ? '' : `<p class="muted small center"><a href="#/account">Sign in</a> to get on the board.</p>`}`;
+  };
+
+  // ======================================================================
+  // Account + settings
+  // ======================================================================
+  V.account = async (el) => {
+    el.innerHTML = `<div style="max-width:560px;margin:0 auto"><h1 class="serif" style="margin:0 0 14px">Account</h1><div id="acct"><div class="empty"><span class="spinner"></span></div></div>
+      <div class="card" style="margin-top:16px" id="settings"></div></div>`;
+    drawSettings(U.$('#settings', el));
+    const box = U.$('#acct', el);
+    const ok = await WS.fb.ready;
+    if (!ok) {
+      box.innerHTML = `<div class="card"><h2>Login unavailable</h2><p class="muted">This copy of WikiSpeedruns isn't connected to Firebase${location.protocol === 'file:' ? ' (you opened it as a local file)' : ''}. Your runs are still saved on this device.</p><p class="small">For accounts, leaderboards and sync, play at <a href="https://wiki-speedruns.web.app">wiki-speedruns.web.app</a>.</p></div>`;
+      return;
+    }
+    const draw = () => {
+      const u = WS.fb.user;
+      if (!u) return drawSignIn(box);
+      const p = WS.fb.profile || {};
+      box.innerHTML = `<div class="card">
+        <div class="row"><span class="avatar" style="width:56px;height:56px;font-size:1.4rem;${p.photoURL ? `background-image:url('${esc(p.photoURL)}')` : ''}">${p.photoURL ? '' : esc((p.displayName || '?')[0])}</span>
+          <div><div class="serif" style="font-size:1.3rem;font-weight:700">${esc(p.displayName || '')}</div>
+          <div class="muted small">${u.isAnonymous ? 'Guest account — only on this device until you upgrade' : esc(u.email || '')}</div></div></div>
+        <div style="margin-top:16px"><label class="field">Leaderboard name</label>
+          <div class="row" style="flex-wrap:nowrap"><input class="input" id="name" maxlength="32" value="${esc(p.displayName || '')}"><button class="btn" id="save-name">Save</button></div></div>
+        ${u.isAnonymous ? `<div class="card" style="margin-top:16px;background:var(--accent-soft);border-color:transparent;box-shadow:none"><b>Keep your runs forever</b><p class="small muted" style="margin:4px 0 10px">Upgrade your guest account — your history and leaderboard entries come with you.</p><button class="btn btn-primary" id="upgrade">${googleIcon} Continue with Google</button></div>` : ''}
+        <div class="row" style="margin-top:16px"><a class="btn" href="#/history">Your runs</a><span class="spacer"></span><button class="btn btn-ghost" id="out">Sign out</button></div></div>`;
+      U.$('#save-name', box).onclick = async () => {
+        try {
+          await WS.fb.setDisplayName(U.$('#name', box).value);
+          U.toast('Name saved', 'good');
+        } catch (e) {
+          U.toast(e.message, 'bad');
+        }
+      };
+      U.$('#out', box).onclick = () => WS.fb.signOut();
+      const up = U.$('#upgrade', box);
+      if (up) up.onclick = () => WS.fb.signInGoogle().catch((e) => U.toast(e.message, 'bad'));
+    };
+    draw();
+    const off = WS.fb.onChange(draw);
+    return off;
+  };
+
+  const googleIcon = `<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>`;
+
+  function drawSignIn(box, { inModal = false } = {}) {
+    box.innerHTML = `<div class="${inModal ? '' : 'card'}">
+      <h2>Sign in</h2>
+      <p class="muted small" style="margin-top:0">Get on the daily leaderboard and sync your runs across devices.</p>
+      <button class="btn btn-block" id="g">${googleIcon} Continue with Google</button>
+      <div class="divider">or with email</div>
+      <form id="ef">
+        <input class="input" type="email" id="em" placeholder="Email" autocomplete="email" required style="margin-bottom:8px">
+        <input class="input" type="password" id="pw" placeholder="Password (6+ characters)" autocomplete="current-password" required minlength="6" style="margin-bottom:10px">
+        <div class="row"><button class="btn btn-primary" type="submit" id="signin">Sign in</button><button class="btn" type="button" id="signup">Create account</button><span class="spacer"></span><button class="btn btn-ghost btn-sm" type="button" id="forgot">Forgot?</button></div>
+      </form>
+      <div class="divider">or</div>
+      <button class="btn btn-block btn-ghost" id="guest">👤 Play as guest</button>
+      <p class="muted tiny" style="margin-bottom:0">Guests get a leaderboard name and can upgrade to a full account later.</p></div>`;
+    const $ = (s) => U.$(s, box);
+    const busy = async (btn, fn) => {
+      const html = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+      try {
+        await fn();
+        return true;
+      } catch (e) {
+        U.toast(e.message, 'bad', 5000);
+        return false;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = html;
+      }
+    };
+    const done = () => box.dispatchEvent(new CustomEvent('signedin', { bubbles: true }));
+    $('#g').onclick = async () => (await busy($('#g'), WS.fb.signInGoogle)) && done();
+    $('#guest').onclick = async () => (await busy($('#guest'), WS.fb.signInGuest)) && done();
+    $('#ef').onsubmit = async (e) => {
+      e.preventDefault();
+      (await busy($('#signin'), () => WS.fb.signInEmail($('#em').value, $('#pw').value, false))) && done();
+    };
+    $('#signup').onclick = async () => {
+      if (!$('#ef').reportValidity()) return;
+      (await busy($('#signup'), () => WS.fb.signInEmail($('#em').value, $('#pw').value, true))) && done();
+    };
+    $('#forgot').onclick = async () => {
+      const em = $('#em').value.trim();
+      if (!em) return U.toast('Enter your email first.');
+      (await busy($('#forgot'), () => WS.fb.resetPassword(em))) && U.toast('Password reset email sent.', 'good');
+    };
+  }
+  WS.ui.signInModal = () => {
+    const m = U.modal('<div id="si"></div>');
+    const box = U.$('#si', m.el);
+    drawSignIn(box, { inModal: true });
+    box.addEventListener('signedin', () => {
+      m.close();
+      U.toast('Signed in!', 'good');
+    });
+  };
+
+  function drawSettings(box) {
+    const s = WS.store.settings();
+    box.innerHTML = `<h2>Settings</h2>
+      <div class="row" style="justify-content:space-between;margin-bottom:12px"><span>Theme</span>
+        <div class="seg">${['auto', 'light', 'dark'].map((t) => `<button data-theme="${t}" class="${s.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>
+      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Show par before starting<br><span class="muted tiny">The optimal number of clicks, from Six Degrees</span></span><input type="checkbox" id="par" ${s.showPar ? 'checked' : ''}></label>
+      <label class="row" style="justify-content:space-between"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>`;
+    U.$$('[data-theme]', box).forEach((b) => (b.onclick = () => {
+      WS.store.setSetting('theme', b.dataset.theme);
+      WS.app.applyTheme();
+      drawSettings(box);
+    }));
+    U.$('#par', box).onchange = (e) => WS.store.setSetting('showPar', e.target.checked);
+    U.$('#refs', box).onchange = (e) => WS.store.setSetting('hideRefs', e.target.checked);
+  }
+
+  // ======================================================================
+  // About
+  // ======================================================================
+  V.about = async (el) => {
+    const isFile = location.protocol === 'file:';
+    el.innerHTML = `<div class="prose">
+      <h1 class="serif">About WikiSpeedruns</h1>
+      <h2>How to play</h2>
+      <ol>
+        <li>You get a <b>start</b> article and a <b>target</b> article.</li>
+        <li>Click links inside the article to move between pages. No search bar, no URL hacking.</li>
+        <li>Reach the target in as little time — and as few clicks — as you can.</li>
+        <li><b>Back</b> is allowed but costs a click. The timer pauses while pages load.</li>
+      </ol>
+      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints are disabled on ranked runs.</p>
+      <p>Shortcuts: <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
+
+      <h2>Six Degrees of Wikipedia inside</h2>
+      <p>After every run, WikiSpeedruns compares your route with <b>every shortest path</b> between the two articles, using <a href="https://github.com/jwngr/sdow" target="_blank" rel="noopener">Six Degrees of Wikipedia</a> by Jacob Wenger (MIT license). For each page you visited it asks how many clicks you still were from the target, so you can see exactly where you gained or lost ground — and what the best link was.</p>
+      <p>The <a href="#/six-degrees">explorer</a> can use the Six Degrees database, or run a port of its bi-directional breadth-first search right in your browser against live Wikipedia.</p>
+
+      <h2>Install it</h2>
+      <ul>
+        <li><b>Phone:</b> open <a href="https://wiki-speedruns.web.app">wiki-speedruns.web.app</a>, then <i>Share → Add to Home Screen</i> (iOS) or <i>⋮ → Install app</i> (Android). It runs full-screen like a native app.</li>
+        <li><b>Desktop:</b> click the install icon in Chrome/Edge's address bar.</li>
+        <li><b>Single HTML file:</b> ${isFile ? 'you are using it right now!' : '<a href="WikiSpeedruns.html" download>download WikiSpeedruns.html</a> and open it in any browser — no server needed. (Accounts and leaderboards need the online version.)'}</li>
+      </ul>
+      <h2>Credits</h2>
+      <p>Article content from <a href="https://en.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a>, available under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Shortest paths from <a href="https://www.sixdegreesofwikipedia.com" target="_blank" rel="noopener">Six Degrees of Wikipedia</a>. Inspired by <a href="https://wikispeedruns.com" target="_blank" rel="noopener">wikispeedruns.com</a>. Not affiliated with the Wikimedia Foundation.</p>
+    </div>`;
+  };
+})(window);
+
+</script>
+  <script>
+/* App shell: hash router, top/bottom nav, account button, theme, service worker. */
+(function (root) {
+  const WS = (root.WS = root.WS || {});
+  const U = WS.util;
+  const esc = U.esc;
+
+  const ROUTES = {
+    '': { view: 'home', nav: 'home', title: 'WikiSpeedruns' },
+    play: { view: 'play', nav: 'play', title: 'Play' },
+    run: { view: 'run', nav: 'history', title: 'Results' },
+    'six-degrees': { view: 'sixDegrees', nav: 'six', title: 'Six Degrees of Wikipedia' },
+    history: { view: 'history', nav: 'history', title: 'Your runs' },
+    leaderboard: { view: 'leaderboard', nav: 'lb', title: 'Leaderboard' },
+    account: { view: 'account', nav: 'me', title: 'Account' },
+    about: { view: 'about', nav: 'about', title: 'About' },
+  };
+
+  const app = (WS.app = { guard: null });
+  let cleanups = [];
+  let token = 0;
+  let lastHash = location.hash;
+
+  const parse = () => {
+    const h = location.hash.replace(/^#\/?/, '');
+    const [path, qs] = h.split('?');
+    const params = {};
+    new URLSearchParams(qs || '').forEach((v, k) => (params[k] = v));
+    return { path: path.replace(/\/$/, ''), params };
+  };
+  const build = (route, params = {}) => {
+    const qs = new URLSearchParams();
+    for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== '') qs.set(k, v);
+    const s = qs.toString();
+    return `#/${route}${s ? '?' + s : ''}`;
+  };
+
+  app.go = (route, params) => {
+    const h = build(route, params);
+    if (h === location.hash) render();
+    else location.hash = h;
+  };
+  app.replaceRoute = (route, params) => {
+    history.replaceState(null, '', build(route, params));
+    lastHash = location.hash;
+    render();
+  };
+  /** Register teardown for the current view (timers, listeners, in-flight requests). */
+  app.addCleanup = (fn) => cleanups.push(fn);
+
+  async function render() {
+    const my = ++token;
+    cleanups.splice(0).forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
+    const { path, params } = parse();
+    const route = ROUTES[path] || ROUTES[''];
+    document.title = route.title === 'WikiSpeedruns' ? 'WikiSpeedruns — race through Wikipedia' : `${route.title} · WikiSpeedruns`;
+    U.$$('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === route.nav));
+    document.body.classList.remove('in-game');
+    const el = document.getElementById('view');
+    el.innerHTML = '';
+    window.scrollTo(0, 0);
+    try {
+      const cleanup = await WS.views[route.view](el, params);
+      if (typeof cleanup === 'function') {
+        if (my === token) cleanups.push(cleanup);
+        else cleanup();
+      }
+    } catch (e) {
+      console.error(e);
+      if (my === token) el.innerHTML = `<div class="empty"><div class="e">💥</div>Something broke: ${esc(e.message)}<br><br><a class="btn" href="#/">Home</a></div>`;
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    if (app.guard && !app.guard()) {
+      history.replaceState(null, '', lastHash);
+      return;
+    }
+    lastHash = location.hash;
+    render();
+  });
+
+  // ---------- Theme ----------
+  app.applyTheme = () => {
+    const t = WS.store.settings().theme;
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    const dark = t === 'dark' || (t === 'auto' && root.matchMedia && root.matchMedia('(prefers-color-scheme: dark)').matches);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#171a21' : '#ffffff');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = dark ? '☀️' : '🌙';
+  };
+
+  // ---------- Account button ----------
+  function drawAccount() {
+    const btn = document.getElementById('acct-btn');
+    if (!btn) return;
+    const u = WS.fb.user;
+    if (!WS.fb.enabled) {
+      btn.className = 'acct-btn signed-out';
+      btn.innerHTML = 'Sign in';
+    } else if (!u) {
+      btn.className = 'acct-btn signed-out';
+      btn.innerHTML = 'Sign in';
+    } else {
+      const p = WS.fb.profile || {};
+      btn.className = 'acct-btn';
+      btn.innerHTML = `${WS.ui.avatar(p.displayName, p.photoURL)}<span class="hide-sm" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.displayName || 'Me')}</span>`;
+    }
+  }
+
+  function boot() {
+    app.applyTheme();
+    if (root.matchMedia) root.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', app.applyTheme);
+    document.getElementById('theme-btn').onclick = () => {
+      const dark = document.getElementById('theme-btn').textContent === '☀️';
+      WS.store.setSetting('theme', dark ? 'light' : 'dark');
+      app.applyTheme();
+    };
+    const acct = document.getElementById('acct-btn');
+    acct.onclick = async () => {
+      const ok = await WS.fb.ready;
+      if (ok && !WS.fb.user) WS.ui.signInModal();
+      else app.go('account');
+    };
+    drawAccount();
+    WS.fb.onChange(drawAccount);
+    WS.fb.ready.then(drawAccount);
+    document.body.classList.add('has-bottom-nav');
+    lastHash = location.hash;
+    render();
+
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW', e));
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})(window);
+
+</script>
+</body>
+</html>
