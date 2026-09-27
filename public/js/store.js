@@ -6,7 +6,7 @@
 
   const S = (WS.store = {});
 
-  S.settings = () => ({ theme: 'auto', showPar: false, hideRefs: true, ...U.store.get('settings', {}) });
+  S.settings = () => ({ theme: 'auto', showPar: false, hideRefs: true, allowBack: false, allowFind: false, ...U.store.get('settings', {}) });
   S.setSetting = (k, v) => U.store.set('settings', { ...S.settings(), [k]: v });
 
   S.localRuns = () => U.store.get('runs', []);

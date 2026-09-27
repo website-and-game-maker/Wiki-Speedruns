@@ -422,7 +422,9 @@
       <div class="row" style="justify-content:space-between;margin-bottom:12px"><span>Theme</span>
         <div class="seg">${['auto', 'light', 'dark'].map((t) => `<button data-theme="${t}" class="${s.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>
       <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Show par before starting<br><span class="muted tiny">The optimal number of clicks, from Six Degrees</span></span><input type="checkbox" id="par" ${s.showPar ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>`;
+      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>
+      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Allow the Back button during runs<br><span class="muted tiny">Off matches the classic no-takebacks rule. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-back" ${s.allowBack ? 'checked' : ''}></label>
+      <label class="row" style="justify-content:space-between"><span>Allow searching articles (Ctrl+F / Cmd+F)<br><span class="muted tiny">Off by default — no searching for the target. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-find" ${s.allowFind ? 'checked' : ''}></label>`;
     U.$$('[data-theme]', box).forEach((b) => (b.onclick = () => {
       WS.store.setSetting('theme', b.dataset.theme);
       WS.app.applyTheme();
@@ -430,6 +432,8 @@
     }));
     U.$('#par', box).onchange = (e) => WS.store.setSetting('showPar', e.target.checked);
     U.$('#refs', box).onchange = (e) => WS.store.setSetting('hideRefs', e.target.checked);
+    U.$('#allow-back', box).onchange = (e) => WS.store.setSetting('allowBack', e.target.checked);
+    U.$('#allow-find', box).onchange = (e) => WS.store.setSetting('allowFind', e.target.checked);
   }
 
   // ======================================================================
@@ -444,10 +448,11 @@
         <li>You get a <b>start</b> article and a <b>target</b> article.</li>
         <li>Click links inside the article to move between pages. No search bar, no URL hacking.</li>
         <li>Reach the target in as little time — and as few clicks — as you can.</li>
-        <li><b>Back</b> is allowed but costs a click. The timer pauses while pages load.</li>
+        <li>By default it's <b>no takebacks and no searching</b> — the classic Six Degrees rule. Once you click a link, that's your route, and Ctrl+F/Cmd+F is blocked. The timer pauses while pages load.</li>
+        <li>You can turn on the <b>Back</b> button and/or in-article <b>searching</b> for yourself in <a href="#/account">Settings</a> — but a run using either won't count for the ranked daily leaderboard, same as using a hint.</li>
       </ol>
-      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints are disabled on ranked runs.</p>
-      <p>Shortcuts: <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
+      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back, and searching are all disabled on ranked runs by default — turning any of them on for a run takes it out of ranked contention.</p>
+      <p>Shortcuts (when Back is enabled in Settings): <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
 
       <h2>Six Degrees of Wikipedia inside</h2>
       <p>After every run, WikiSpeedruns compares your route with <b>every shortest path</b> between the two articles, using <a href="https://github.com/jwngr/sdow" target="_blank" rel="noopener">Six Degrees of Wikipedia</a> by Jacob Wenger (MIT license). For each page you visited it asks how many clicks you still were from the target, so you can see exactly where you gained or lost ground — and what the best link was.</p>

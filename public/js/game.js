@@ -23,6 +23,7 @@
       return;
     }
 
+    const settings = WS.store.settings();
     const isDaily = mode === 'daily';
     const title = isDaily ? `Daily Challenge #${U.dailyNumber(date)}` : mode === 'random' ? 'Random Challenge' : 'Custom Challenge';
     el.innerHTML = `
@@ -42,7 +43,7 @@
           ${mode !== 'daily' ? '<button class="btn" id="swap">⇄ Swap</button>' : ''}
           <button class="btn btn-ghost" id="share">🔗 Challenge a friend</button>
         </div>
-        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. <b>Back</b> costs a click. The timer pauses while pages load, so slow internet doesn't hurt you. No searching!</p>
+        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. ${settings.allowBack ? '<b>Back</b> is on — it costs a click and takes this run out of ranked contention.' : 'No takebacks — once you click, that\'s it.'} ${settings.allowFind ? 'Searching (Ctrl+F) is on — it also takes this run out of ranked contention.' : 'No searching — Ctrl+F is blocked.'} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a></p>
       </div>`;
 
     const $ = (s) => U.$(s, el);
@@ -149,6 +150,7 @@
       clicks: 0,
       backs: 0,
       hints: 0,
+      finds: 0,
       activeMs: 0,
       segStart: null,
       loading: false,
@@ -156,6 +158,8 @@
       navToken: 0,
     };
     const hideRefs = WS.store.settings().hideRefs;
+    const allowBack = WS.store.settings().allowBack;
+    const allowFind = WS.store.settings().allowFind;
 
     document.body.classList.add('in-game');
     WS.app.guard = () => s.done || confirm('Leave this run? It will not be saved.');
@@ -169,7 +173,7 @@
           </button>
           <div class="hud-stat"><div class="v" id="clicks">0</div><div class="k">Clicks</div></div>
           <div class="hud-stat"><div class="v" id="timer">0:00.0</div><div class="k">Time</div></div>
-          <button class="btn btn-sm" id="back" title="Go back (costs a click) — Alt+←" disabled>←<span class="hide-sm"> Back</span></button>
+          ${allowBack ? '<button class="btn btn-sm" id="back" title="Go back (costs a click) — Alt+←" disabled>←<span class="hide-sm"> Back</span></button>' : ''}
           ${cfg.ranked ? '' : '<button class="btn btn-sm" id="hint" title="Ask Six Degrees for a hint">💡<span class="hide-sm"> Hint</span></button>'}
         </div>
         <div class="hud-crumbs" id="crumbs"></div>
@@ -194,10 +198,11 @@
       if (s.segStart == null && !s.done) s.segStart = now();
     };
     const tick = setInterval(() => ($('#timer').textContent = U.fmtTime(elapsed())), 100);
+    const backBtn = allowBack ? $('#back') : null;
 
     const drawCrumbs = () => {
       $('#clicks').textContent = s.clicks;
-      $('#back').disabled = s.stack.length < 2 || s.done;
+      if (backBtn) backBtn.disabled = s.stack.length < 2 || s.done;
       const items = s.path.map((p, i) => `<span class="crumb ${i === s.path.length - 1 ? 'cur' : ''} ${p.back ? 'back' : ''}">${p.back ? '↩ ' : ''}${esc(p.title)}</span>`);
       $('#crumbs').innerHTML = items.join('<span class="crumb-sep">›</span>');
       const c = $('#crumbs');
@@ -258,7 +263,7 @@
     }
 
     async function back() {
-      if (s.loading || s.done || s.stack.length < 2) return;
+      if (!allowBack || s.loading || s.done || s.stack.length < 2) return;
       const prev = s.stack[s.stack.length - 2];
       await show(prev, {
         onLoaded: (a) => {
@@ -294,9 +299,17 @@
     });
     const onKey = (e) => {
       if (e.target.matches && e.target.matches('input, textarea')) return;
-      if ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey)) {
+      if (allowBack && ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey))) {
         e.preventDefault();
         back();
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+        if (!allowFind) {
+          e.preventDefault();
+          U.toast('Searching is off — turn it on in Settings if you want it.');
+        } else {
+          s.finds++;
+        }
       }
     };
     document.addEventListener('keydown', onKey);
@@ -308,7 +321,7 @@
     };
     window.addEventListener('beforeunload', onUnload);
 
-    $('#back').onclick = back;
+    if (backBtn) backBtn.onclick = back;
     $('#peek').onclick = () => {
       const t = cfg.targetInfo;
       U.modal(`<div class="label pill pill-hot">🎯 Target</div>
@@ -378,13 +391,14 @@
         id: s.id,
         mode: s.mode,
         date: s.date,
-        ranked: !!s.ranked && s.hints === 0,
+        ranked: !!s.ranked && s.hints === 0 && s.backs === 0 && s.finds === 0,
         start: s.start,
         target: s.target,
         path: s.path,
         clicks: s.clicks,
         backs: s.backs,
         hints: s.hints,
+        finds: s.finds,
         timeMs: Math.round(s.activeMs),
         finished: won,
         optimal: null,
@@ -405,6 +419,12 @@
       WS.app.go('run', { id: run.id, fresh: '1' });
     }
 
+    history.pushState({ wsRunTrap: s.id }, '', location.href);
+    const onPopState = () => {
+      if (!s.done) history.pushState({ wsRunTrap: s.id }, '', location.href);
+    };
+    window.addEventListener('popstate', onPopState);
+
     drawCrumbs();
     show(cfg.start);
 
@@ -413,6 +433,7 @@
       WS.app.guard = null;
       document.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onUnload);
+      window.removeEventListener('popstate', onPopState);
       document.body.classList.remove('in-game');
       s.navToken++;
     });
@@ -490,7 +511,7 @@
       <div class="win-banner">
         <div class="big">${titleLine[0]}</div>
         <h1>${titleLine[1]}</h1>
-        <div class="muted">${esc(run.start)} → ${esc(run.target)} · ${esc(modeLabel)}${run.ranked ? ' · <span class="pill pill-good">Ranked</span>' : ''}${run.hints ? ` · <span class="pill pill-warn">💡 ${run.hints} hint${run.hints > 1 ? 's' : ''}</span>` : ''}</div>
+        <div class="muted">${esc(run.start)} → ${esc(run.target)} · ${esc(modeLabel)}${run.ranked ? ' · <span class="pill pill-good">Ranked</span>' : ''}${run.hints ? ` · <span class="pill pill-warn">💡 ${U.plural(run.hints, 'hint')}</span>` : ''}${run.backs ? ` · <span class="pill pill-warn">↩ ${U.plural(run.backs, 'back')}</span>` : ''}${run.finds ? ` · <span class="pill pill-warn">🔍 ${U.plural(run.finds, 'search', 'searches')}</span>` : ''}</div>
       </div>
       <div class="stats" id="stats"></div>
       <div class="row" style="justify-content:center;margin-bottom:22px">

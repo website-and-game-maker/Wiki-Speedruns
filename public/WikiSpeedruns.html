@@ -119,75 +119,117 @@ h1, h2, h3 { line-height: 1.2; }
 .center { text-align: center; }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* ============ Top bar ============ */
-.topbar {
-  position: sticky;
-  top: 0;
+/* ============ Dock (floating bottom nav) ============ */
+body.has-bottom-nav main { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: max(14px, calc(6px + env(safe-area-inset-bottom)));
+  transform: translateX(-50%);
   z-index: 50;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px max(16px, env(safe-area-inset-left));
-  padding-top: max(10px, env(safe-area-inset-top));
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  gap: 2px;
+  width: calc(100% - 12px);
+  max-width: 880px;
+  padding: 5px 5px 5px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
   backdrop-filter: saturate(1.4) blur(10px);
   -webkit-backdrop-filter: saturate(1.4) blur(10px);
-  border-bottom: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  box-shadow: var(--shadow-lg);
+  animation: dock-float 7s ease-in-out infinite;
 }
+@keyframes dock-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock { animation: none; }
+}
+body.in-game .dock { display: none; }
+
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-family: var(--serif);
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
   text-decoration: none;
   color: var(--text);
   white-space: nowrap;
+  flex: 0 0 auto;
+  padding: 2px;
 }
-.brand img { width: 30px; height: 30px; }
+.brand img { width: 22px; height: 22px; }
 .brand b { color: var(--hot); font-weight: 700; }
-.nav { display: flex; gap: 2px; margin-left: 12px; }
-.nav a {
-  padding: 7px 12px;
-  border-radius: 999px;
+.brand-text { display: none; }
+
+.dock-links {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.dock-links::-webkit-scrollbar { display: none; }
+.dock-links a {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 5px 4px;
+  border-radius: 14px;
   text-decoration: none;
   color: var(--muted);
-  font-weight: 600;
-  font-size: 0.93rem;
+  font-weight: 700;
+  font-size: 0.56rem;
+  line-height: 1.15;
+  white-space: nowrap;
 }
-.nav a:hover { background: var(--surface-2); color: var(--text); }
-.nav a.active { background: var(--accent-soft); color: var(--accent); }
-.bottom-nav { display: none; }
-@media (max-width: 760px) {
-  .nav { display: none; }
-  .bottom-nav {
-    display: flex;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 50;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding-bottom: env(safe-area-inset-bottom);
+.dock-links a .ic { font-size: 1.05rem; line-height: 1; }
+.dock-links a:hover { background: var(--surface-2); color: var(--text); }
+.dock-links a.active { background: var(--accent-soft); color: var(--accent); }
+
+.dock .icon-btn { flex: 0 0 auto; width: 30px; height: 30px; font-size: 0.95rem; }
+.dock .acct-btn { flex: 0 0 auto; }
+.dock .acct-btn.signed-out { padding: 5px 9px; font-size: 0.76rem; }
+
+/* Least-critical link: drop it first when space is very tight */
+@media (max-width: 420px) {
+  .dock-links a[data-nav="about"] { display: none; }
+}
+
+@media (min-width: 460px) {
+  .dock { gap: 4px; padding: 6px 8px 6px 10px; }
+  .dock-links a { padding: 6px 8px; font-size: 0.62rem; }
+  .dock-links a .ic { font-size: 1.15rem; }
+  .dock .icon-btn { width: 34px; height: 34px; font-size: 1.05rem; }
+  .dock .acct-btn.signed-out { padding: 6px 12px; font-size: 0.82rem; }
+}
+
+@media (min-width: 900px) {
+  .dock { padding: 8px 12px 8px 16px; gap: 10px; }
+  .brand { font-size: 1.25rem; gap: 8px; }
+  .brand img { width: 30px; height: 30px; }
+  .brand-text { display: inline; }
+  .dock-links { gap: 2px; }
+  .dock-links a {
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
-  .bottom-nav a {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 8px 0 6px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-decoration: none;
-    color: var(--muted);
-  }
-  .bottom-nav a span { font-size: 1.25rem; line-height: 1; }
-  .bottom-nav a.active { color: var(--accent); }
-  body.has-bottom-nav main { padding-bottom: 84px; }
-  body.in-game .bottom-nav { display: none; }
+  .dock-links a .ic { font-size: 1rem; }
+  .dock .icon-btn { width: 38px; height: 38px; font-size: 1.05rem; }
+  .dock .acct-btn.signed-out { padding: 7px 14px; font-size: 0.9rem; }
 }
 
 /* ============ Buttons & inputs ============ */
@@ -385,7 +427,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
 .ac-item > div { min-width: 0; }
 
 /* ============ Game HUD ============ */
-body.in-game .topbar { display: none; }
 body.in-game main { max-width: none; padding: 0; }
 .hud {
   position: sticky;
@@ -764,26 +805,18 @@ kbd { font-family: var(--mono); font-size: 0.8em; padding: 1px 6px; border-radiu
 </style>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzYTYzZjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmY2YTFhIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNnKSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMzUyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSwgJ1RpbWVzIE5ldyBSb21hbicsIHNlcmlmIiBmb250LXNpemU9IjMwMCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiI+VzwvdGV4dD4KICA8cGF0aCBkPSJNMzE4IDE0MiBMNDE4IDE0MiBMMzgwIDI1NiBMNDMwIDI1NiBMMzMwIDQwMCBMMzUyIDI5MCBMMzAwIDI5MCBaIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMxNjE4MWQiIHN0cm9rZS13aWR0aD0iMTAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""><span>Wiki<b>Speedruns</b></span></a>
-    <nav class="nav">
-      <a href="#/" data-nav="home">Play</a>
-      <a href="#/six-degrees" data-nav="six">Six Degrees</a>
-      <a href="#/leaderboard" data-nav="lb">Leaderboard</a>
-      <a href="#/history" data-nav="history">My runs</a>
-      <a href="#/about" data-nav="about">About</a>
-    </nav>
-    <span class="spacer"></span>
+  <main id="view"></main>
+  <nav class="dock" id="dock">
+    <a class="brand" href="#/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzYTYzZjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmY2YTFhIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNnKSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMzUyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSwgJ1RpbWVzIE5ldyBSb21hbicsIHNlcmlmIiBmb250LXNpemU9IjMwMCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiI+VzwvdGV4dD4KICA8cGF0aCBkPSJNMzE4IDE0MiBMNDE4IDE0MiBMMzgwIDI1NiBMNDMwIDI1NiBMMzMwIDQwMCBMMzUyIDI5MCBMMzAwIDI5MCBaIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMxNjE4MWQiIHN0cm9rZS13aWR0aD0iMTAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""><span class="brand-text">Wiki<b>Speedruns</b></span></a>
+    <div class="dock-links">
+      <a href="#/" data-nav="home"><span class="ic">🏠</span><span class="lbl">Play</span></a>
+      <a href="#/six-degrees" data-nav="six"><span class="ic">🔭</span><span class="lbl">Explore</span></a>
+      <a href="#/leaderboard" data-nav="lb"><span class="ic">🏆</span><span class="lbl">Ranks</span></a>
+      <a href="#/history" data-nav="history"><span class="ic">📜</span><span class="lbl">Runs</span></a>
+      <a href="#/about" data-nav="about"><span class="ic">ℹ️</span><span class="lbl">About</span></a>
+    </div>
     <button class="icon-btn" id="theme-btn" title="Toggle dark mode">🌙</button>
     <button class="acct-btn signed-out" id="acct-btn">Sign in</button>
-  </header>
-  <main id="view"></main>
-  <nav class="bottom-nav">
-    <a href="#/" data-nav="home"><span>🏠</span>Home</a>
-    <a href="#/play?mode=daily" data-nav="play"><span>📅</span>Daily</a>
-    <a href="#/six-degrees" data-nav="six"><span>🔭</span>Explore</a>
-    <a href="#/leaderboard" data-nav="lb"><span>🏆</span>Ranks</a>
-    <a href="#/history" data-nav="history"><span>📜</span>Runs</a>
   </nav>
   <div id="modal-root"></div>
   <div id="toast-root"></div>
@@ -1765,7 +1798,7 @@ window.WS_FIREBASE_CONFIG = null;
 
   const S = (WS.store = {});
 
-  S.settings = () => ({ theme: 'auto', showPar: false, hideRefs: true, ...U.store.get('settings', {}) });
+  S.settings = () => ({ theme: 'auto', showPar: false, hideRefs: true, allowBack: false, allowFind: false, ...U.store.get('settings', {}) });
   S.setSetting = (k, v) => U.store.set('settings', { ...S.settings(), [k]: v });
 
   S.localRuns = () => U.store.get('runs', []);
@@ -2548,6 +2581,7 @@ window.WS_FIREBASE_CONFIG = null;
       return;
     }
 
+    const settings = WS.store.settings();
     const isDaily = mode === 'daily';
     const title = isDaily ? `Daily Challenge #${U.dailyNumber(date)}` : mode === 'random' ? 'Random Challenge' : 'Custom Challenge';
     el.innerHTML = `
@@ -2567,7 +2601,7 @@ window.WS_FIREBASE_CONFIG = null;
           ${mode !== 'daily' ? '<button class="btn" id="swap">⇄ Swap</button>' : ''}
           <button class="btn btn-ghost" id="share">🔗 Challenge a friend</button>
         </div>
-        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. <b>Back</b> costs a click. The timer pauses while pages load, so slow internet doesn't hurt you. No searching!</p>
+        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. ${settings.allowBack ? '<b>Back</b> is on — it costs a click and takes this run out of ranked contention.' : 'No takebacks — once you click, that\'s it.'} ${settings.allowFind ? 'Searching (Ctrl+F) is on — it also takes this run out of ranked contention.' : 'No searching — Ctrl+F is blocked.'} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a></p>
       </div>`;
 
     const $ = (s) => U.$(s, el);
@@ -2674,6 +2708,7 @@ window.WS_FIREBASE_CONFIG = null;
       clicks: 0,
       backs: 0,
       hints: 0,
+      finds: 0,
       activeMs: 0,
       segStart: null,
       loading: false,
@@ -2681,6 +2716,8 @@ window.WS_FIREBASE_CONFIG = null;
       navToken: 0,
     };
     const hideRefs = WS.store.settings().hideRefs;
+    const allowBack = WS.store.settings().allowBack;
+    const allowFind = WS.store.settings().allowFind;
 
     document.body.classList.add('in-game');
     WS.app.guard = () => s.done || confirm('Leave this run? It will not be saved.');
@@ -2694,7 +2731,7 @@ window.WS_FIREBASE_CONFIG = null;
           </button>
           <div class="hud-stat"><div class="v" id="clicks">0</div><div class="k">Clicks</div></div>
           <div class="hud-stat"><div class="v" id="timer">0:00.0</div><div class="k">Time</div></div>
-          <button class="btn btn-sm" id="back" title="Go back (costs a click) — Alt+←" disabled>←<span class="hide-sm"> Back</span></button>
+          ${allowBack ? '<button class="btn btn-sm" id="back" title="Go back (costs a click) — Alt+←" disabled>←<span class="hide-sm"> Back</span></button>' : ''}
           ${cfg.ranked ? '' : '<button class="btn btn-sm" id="hint" title="Ask Six Degrees for a hint">💡<span class="hide-sm"> Hint</span></button>'}
         </div>
         <div class="hud-crumbs" id="crumbs"></div>
@@ -2719,10 +2756,11 @@ window.WS_FIREBASE_CONFIG = null;
       if (s.segStart == null && !s.done) s.segStart = now();
     };
     const tick = setInterval(() => ($('#timer').textContent = U.fmtTime(elapsed())), 100);
+    const backBtn = allowBack ? $('#back') : null;
 
     const drawCrumbs = () => {
       $('#clicks').textContent = s.clicks;
-      $('#back').disabled = s.stack.length < 2 || s.done;
+      if (backBtn) backBtn.disabled = s.stack.length < 2 || s.done;
       const items = s.path.map((p, i) => `<span class="crumb ${i === s.path.length - 1 ? 'cur' : ''} ${p.back ? 'back' : ''}">${p.back ? '↩ ' : ''}${esc(p.title)}</span>`);
       $('#crumbs').innerHTML = items.join('<span class="crumb-sep">›</span>');
       const c = $('#crumbs');
@@ -2783,7 +2821,7 @@ window.WS_FIREBASE_CONFIG = null;
     }
 
     async function back() {
-      if (s.loading || s.done || s.stack.length < 2) return;
+      if (!allowBack || s.loading || s.done || s.stack.length < 2) return;
       const prev = s.stack[s.stack.length - 2];
       await show(prev, {
         onLoaded: (a) => {
@@ -2819,9 +2857,17 @@ window.WS_FIREBASE_CONFIG = null;
     });
     const onKey = (e) => {
       if (e.target.matches && e.target.matches('input, textarea')) return;
-      if ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey)) {
+      if (allowBack && ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey))) {
         e.preventDefault();
         back();
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+        if (!allowFind) {
+          e.preventDefault();
+          U.toast('Searching is off — turn it on in Settings if you want it.');
+        } else {
+          s.finds++;
+        }
       }
     };
     document.addEventListener('keydown', onKey);
@@ -2833,7 +2879,7 @@ window.WS_FIREBASE_CONFIG = null;
     };
     window.addEventListener('beforeunload', onUnload);
 
-    $('#back').onclick = back;
+    if (backBtn) backBtn.onclick = back;
     $('#peek').onclick = () => {
       const t = cfg.targetInfo;
       U.modal(`<div class="label pill pill-hot">🎯 Target</div>
@@ -2903,13 +2949,14 @@ window.WS_FIREBASE_CONFIG = null;
         id: s.id,
         mode: s.mode,
         date: s.date,
-        ranked: !!s.ranked && s.hints === 0,
+        ranked: !!s.ranked && s.hints === 0 && s.backs === 0 && s.finds === 0,
         start: s.start,
         target: s.target,
         path: s.path,
         clicks: s.clicks,
         backs: s.backs,
         hints: s.hints,
+        finds: s.finds,
         timeMs: Math.round(s.activeMs),
         finished: won,
         optimal: null,
@@ -2930,6 +2977,12 @@ window.WS_FIREBASE_CONFIG = null;
       WS.app.go('run', { id: run.id, fresh: '1' });
     }
 
+    history.pushState({ wsRunTrap: s.id }, '', location.href);
+    const onPopState = () => {
+      if (!s.done) history.pushState({ wsRunTrap: s.id }, '', location.href);
+    };
+    window.addEventListener('popstate', onPopState);
+
     drawCrumbs();
     show(cfg.start);
 
@@ -2938,6 +2991,7 @@ window.WS_FIREBASE_CONFIG = null;
       WS.app.guard = null;
       document.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onUnload);
+      window.removeEventListener('popstate', onPopState);
       document.body.classList.remove('in-game');
       s.navToken++;
     });
@@ -3015,7 +3069,7 @@ window.WS_FIREBASE_CONFIG = null;
       <div class="win-banner">
         <div class="big">${titleLine[0]}</div>
         <h1>${titleLine[1]}</h1>
-        <div class="muted">${esc(run.start)} → ${esc(run.target)} · ${esc(modeLabel)}${run.ranked ? ' · <span class="pill pill-good">Ranked</span>' : ''}${run.hints ? ` · <span class="pill pill-warn">💡 ${run.hints} hint${run.hints > 1 ? 's' : ''}</span>` : ''}</div>
+        <div class="muted">${esc(run.start)} → ${esc(run.target)} · ${esc(modeLabel)}${run.ranked ? ' · <span class="pill pill-good">Ranked</span>' : ''}${run.hints ? ` · <span class="pill pill-warn">💡 ${U.plural(run.hints, 'hint')}</span>` : ''}${run.backs ? ` · <span class="pill pill-warn">↩ ${U.plural(run.backs, 'back')}</span>` : ''}${run.finds ? ` · <span class="pill pill-warn">🔍 ${U.plural(run.finds, 'search', 'searches')}</span>` : ''}</div>
       </div>
       <div class="stats" id="stats"></div>
       <div class="row" style="justify-content:center;margin-bottom:22px">
@@ -3678,7 +3732,9 @@ window.WS_FIREBASE_CONFIG = null;
       <div class="row" style="justify-content:space-between;margin-bottom:12px"><span>Theme</span>
         <div class="seg">${['auto', 'light', 'dark'].map((t) => `<button data-theme="${t}" class="${s.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>
       <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Show par before starting<br><span class="muted tiny">The optimal number of clicks, from Six Degrees</span></span><input type="checkbox" id="par" ${s.showPar ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>`;
+      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>
+      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Allow the Back button during runs<br><span class="muted tiny">Off matches the classic no-takebacks rule. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-back" ${s.allowBack ? 'checked' : ''}></label>
+      <label class="row" style="justify-content:space-between"><span>Allow searching articles (Ctrl+F / Cmd+F)<br><span class="muted tiny">Off by default — no searching for the target. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-find" ${s.allowFind ? 'checked' : ''}></label>`;
     U.$$('[data-theme]', box).forEach((b) => (b.onclick = () => {
       WS.store.setSetting('theme', b.dataset.theme);
       WS.app.applyTheme();
@@ -3686,6 +3742,8 @@ window.WS_FIREBASE_CONFIG = null;
     }));
     U.$('#par', box).onchange = (e) => WS.store.setSetting('showPar', e.target.checked);
     U.$('#refs', box).onchange = (e) => WS.store.setSetting('hideRefs', e.target.checked);
+    U.$('#allow-back', box).onchange = (e) => WS.store.setSetting('allowBack', e.target.checked);
+    U.$('#allow-find', box).onchange = (e) => WS.store.setSetting('allowFind', e.target.checked);
   }
 
   // ======================================================================
@@ -3700,10 +3758,11 @@ window.WS_FIREBASE_CONFIG = null;
         <li>You get a <b>start</b> article and a <b>target</b> article.</li>
         <li>Click links inside the article to move between pages. No search bar, no URL hacking.</li>
         <li>Reach the target in as little time — and as few clicks — as you can.</li>
-        <li><b>Back</b> is allowed but costs a click. The timer pauses while pages load.</li>
+        <li>By default it's <b>no takebacks and no searching</b> — the classic Six Degrees rule. Once you click a link, that's your route, and Ctrl+F/Cmd+F is blocked. The timer pauses while pages load.</li>
+        <li>You can turn on the <b>Back</b> button and/or in-article <b>searching</b> for yourself in <a href="#/account">Settings</a> — but a run using either won't count for the ranked daily leaderboard, same as using a hint.</li>
       </ol>
-      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints are disabled on ranked runs.</p>
-      <p>Shortcuts: <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
+      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back, and searching are all disabled on ranked runs by default — turning any of them on for a run takes it out of ranked contention.</p>
+      <p>Shortcuts (when Back is enabled in Settings): <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
 
       <h2>Six Degrees of Wikipedia inside</h2>
       <p>After every run, WikiSpeedruns compares your route with <b>every shortest path</b> between the two articles, using <a href="https://github.com/jwngr/sdow" target="_blank" rel="noopener">Six Degrees of Wikipedia</a> by Jacob Wenger (MIT license). For each page you visited it asks how many clicks you still were from the target, so you can see exactly where you gained or lost ground — and what the best link was.</p>
