@@ -101,117 +101,75 @@ h1, h2, h3 { line-height: 1.2; }
 .center { text-align: center; }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* ============ Dock (floating bottom nav) ============ */
-body.has-bottom-nav main { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
-.dock {
-  position: fixed;
-  left: 50%;
-  bottom: max(14px, calc(6px + env(safe-area-inset-bottom)));
-  transform: translateX(-50%);
+/* ============ Top bar ============ */
+.topbar {
+  position: sticky;
+  top: 0;
   z-index: 50;
   display: flex;
   align-items: center;
-  gap: 2px;
-  width: calc(100% - 12px);
-  max-width: 880px;
-  padding: 5px 5px 5px 7px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  gap: 8px;
+  padding: 10px max(16px, env(safe-area-inset-left));
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: saturate(1.4) blur(10px);
   -webkit-backdrop-filter: saturate(1.4) blur(10px);
-  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  box-shadow: var(--shadow-lg);
-  animation: dock-float 7s ease-in-out infinite;
+  border-bottom: 1px solid var(--border);
 }
-@keyframes dock-float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-3px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dock { animation: none; }
-}
-body.in-game .dock { display: none; }
-
 .brand {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: var(--serif);
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
   color: var(--text);
   white-space: nowrap;
-  flex: 0 0 auto;
-  padding: 2px;
 }
-.brand img { width: 22px; height: 22px; }
+.brand img { width: 30px; height: 30px; }
 .brand b { color: var(--hot); font-weight: 700; }
-.brand-text { display: none; }
-
-.dock-links {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.dock-links::-webkit-scrollbar { display: none; }
-.dock-links a {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  padding: 5px 4px;
-  border-radius: 14px;
+.nav { display: flex; gap: 2px; margin-left: 12px; }
+.nav a {
+  padding: 7px 12px;
+  border-radius: 999px;
   text-decoration: none;
   color: var(--muted);
-  font-weight: 700;
-  font-size: 0.56rem;
-  line-height: 1.15;
-  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.93rem;
 }
-.dock-links a .ic { font-size: 1.05rem; line-height: 1; }
-.dock-links a:hover { background: var(--surface-2); color: var(--text); }
-.dock-links a.active { background: var(--accent-soft); color: var(--accent); }
-
-.dock .icon-btn { flex: 0 0 auto; width: 30px; height: 30px; font-size: 0.95rem; }
-.dock .acct-btn { flex: 0 0 auto; }
-.dock .acct-btn.signed-out { padding: 5px 9px; font-size: 0.76rem; }
-
-/* Least-critical link: drop it first when space is very tight */
-@media (max-width: 420px) {
-  .dock-links a[data-nav="about"] { display: none; }
-}
-
-@media (min-width: 460px) {
-  .dock { gap: 4px; padding: 6px 8px 6px 10px; }
-  .dock-links a { padding: 6px 8px; font-size: 0.62rem; }
-  .dock-links a .ic { font-size: 1.15rem; }
-  .dock .icon-btn { width: 34px; height: 34px; font-size: 1.05rem; }
-  .dock .acct-btn.signed-out { padding: 6px 12px; font-size: 0.82rem; }
-}
-
-@media (min-width: 900px) {
-  .dock { padding: 8px 12px 8px 16px; gap: 10px; }
-  .brand { font-size: 1.25rem; gap: 8px; }
-  .brand img { width: 30px; height: 30px; }
-  .brand-text { display: inline; }
-  .dock-links { gap: 2px; }
-  .dock-links a {
-    flex-direction: row;
-    gap: 6px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
+.nav a:hover { background: var(--surface-2); color: var(--text); }
+.nav a.active { background: var(--accent-soft); color: var(--accent); }
+.bottom-nav { display: none; }
+@media (max-width: 760px) {
+  .nav { display: none; }
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .dock-links a .ic { font-size: 1rem; }
-  .dock .icon-btn { width: 38px; height: 38px; font-size: 1.05rem; }
-  .dock .acct-btn.signed-out { padding: 7px 14px; font-size: 0.9rem; }
+  .bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--muted);
+  }
+  .bottom-nav a span { font-size: 1.25rem; line-height: 1; }
+  .bottom-nav a.active { color: var(--accent); }
+  body.has-bottom-nav main { padding-bottom: 84px; }
+  body.in-game .bottom-nav { display: none; }
 }
 
 /* ============ Buttons & inputs ============ */
@@ -409,23 +367,37 @@ main { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
 .ac-item > div { min-width: 0; }
 
 /* ============ Game HUD ============ */
+body.in-game .topbar { display: none; }
 body.in-game main { max-width: none; padding: 0; }
 .hud {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  left: 50%;
+  bottom: max(12px, calc(6px + env(safe-area-inset-bottom)));
+  transform: translateX(-50%);
   z-index: 40;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: saturate(1.4) blur(10px);
-  -webkit-backdrop-filter: saturate(1.4) blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding-top: env(safe-area-inset-top);
+  width: calc(100% - 16px);
+  max-width: 900px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 93%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  box-shadow: var(--shadow-lg);
+  animation: hud-float 7s ease-in-out infinite;
+}
+@keyframes hud-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hud { animation: none; }
 }
 .hud-main {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  max-width: 1120px;
+  padding: 10px 12px 8px;
   margin: 0 auto;
 }
 .hud-target {
@@ -453,8 +425,7 @@ body.in-game main { max-width: none; padding: 0; }
   gap: 4px;
   align-items: center;
   overflow-x: auto;
-  padding: 0 12px 8px;
-  max-width: 1120px;
+  padding: 0 12px 10px;
   margin: 0 auto;
   scrollbar-width: none;
   font-size: 0.8rem;
@@ -464,7 +435,7 @@ body.in-game main { max-width: none; padding: 0; }
 .crumb.cur { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .crumb.back { text-decoration: line-through; opacity: 0.6; }
 .crumb-sep { color: var(--muted); opacity: 0.6; }
-.loadbar { position: absolute; left: 0; bottom: -1px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--hot)); transition: width 0.25s ease; }
+.loadbar { position: absolute; left: 0; top: 0; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--hot)); transition: width 0.25s ease; }
 .loadbar.on { width: 70%; transition: width 3s cubic-bezier(0.1, 0.7, 0.2, 1); }
 .loadbar.done { width: 100%; opacity: 0; transition: width 0.15s, opacity 0.4s 0.15s; }
 @media (max-width: 560px) {
@@ -474,7 +445,7 @@ body.in-game main { max-width: none; padding: 0; }
   .hide-sm { display: none; }
 }
 
-.article-wrap { max-width: 980px; margin: 0 auto; padding: 18px 18px 120px; }
+.article-wrap { max-width: 980px; margin: 0 auto; padding: 18px 18px calc(190px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-x: clip; }
 .article-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 6px 0 4px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 .redirect-note { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
 
@@ -482,7 +453,7 @@ body.in-game main { max-width: none; padding: 0; }
   position: fixed;
   z-index: 45;
   right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
+  bottom: calc(132px + env(safe-area-inset-bottom));
   max-width: 340px;
   background: var(--surface);
   border: 1px solid var(--border);

@@ -20,18 +20,26 @@
   <link rel="stylesheet" href="css/wiki.css">
 </head>
 <body>
-  <main id="view"></main>
-  <nav class="dock" id="dock">
-    <a class="brand" href="#/"><img src="icons/icon.svg" alt=""><span class="brand-text">Wiki<b>Speedruns</b></span></a>
-    <div class="dock-links">
-      <a href="#/" data-nav="home"><span class="ic">🏠</span><span class="lbl">Play</span></a>
-      <a href="#/six-degrees" data-nav="six"><span class="ic">🔭</span><span class="lbl">Explore</span></a>
-      <a href="#/leaderboard" data-nav="lb"><span class="ic">🏆</span><span class="lbl">Ranks</span></a>
-      <a href="#/history" data-nav="history"><span class="ic">📜</span><span class="lbl">Runs</span></a>
-      <a href="#/about" data-nav="about"><span class="ic">ℹ️</span><span class="lbl">About</span></a>
-    </div>
+  <header class="topbar">
+    <a class="brand" href="#/"><img src="icons/icon.svg" alt=""><span>Wiki<b>Speedruns</b></span></a>
+    <nav class="nav">
+      <a href="#/" data-nav="home">Play</a>
+      <a href="#/six-degrees" data-nav="six">Six Degrees</a>
+      <a href="#/leaderboard" data-nav="lb">Leaderboard</a>
+      <a href="#/history" data-nav="history">My runs</a>
+      <a href="#/about" data-nav="about">About</a>
+    </nav>
+    <span class="spacer"></span>
     <button class="icon-btn" id="theme-btn" title="Toggle dark mode">🌙</button>
     <button class="acct-btn signed-out" id="acct-btn">Sign in</button>
+  </header>
+  <main id="view"></main>
+  <nav class="bottom-nav">
+    <a href="#/" data-nav="home"><span>🏠</span>Home</a>
+    <a href="#/play?mode=daily" data-nav="play"><span>📅</span>Daily</a>
+    <a href="#/six-degrees" data-nav="six"><span>🔭</span>Explore</a>
+    <a href="#/leaderboard" data-nav="lb"><span>🏆</span>Ranks</a>
+    <a href="#/history" data-nav="history"><span>📜</span>Runs</a>
   </nav>
   <div id="modal-root"></div>
   <div id="toast-root"></div>
