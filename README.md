@@ -8,7 +8,7 @@ Race from one Wikipedia article to another using only the links inside them — 
 
 - **Daily Challenge** — same pair for everyone (resets 00:00 UTC), first attempt is ranked, global leaderboard (fastest / fewest clicks), streaks.
 - **Random**, **Chaos** (truly random articles) and **Custom** challenges, with shareable challenge links.
-- **Fair timer** — pauses while pages load. Back is allowed but costs a click.
+- **Fair timer** — pauses while pages load. No takebacks and no searching by default; Back and Ctrl+F can be enabled in Settings (never on ranked runs).
 - **Post-run analysis** — for every page you visited: how many clicks you still were from the target, which link was best, your first wrong turn, a distance chart, and a graph of all shortest paths with your route highlighted. Wordle-style share card.
 - **Hints** (unranked runs) — Six Degrees tells you how far you are and highlights the best link on the page.
 - **Six Degrees explorer** — any two articles, two engines:
@@ -16,7 +16,7 @@ Race from one Wikipedia article to another using only the links inside them — 
   - *Live*: a port of SDOW's bi-directional BFS (`sdow/breadth_first_search.py`) running in your browser against the live Wikipedia API. Auto mode falls back to it for articles newer than the snapshot.
 - **Login** (Firebase Auth): Google, email/password, or guest (upgradeable without losing history). Runs sync across devices; everything also works logged-out (saved locally).
 - **Runs everywhere**: website, installable app on phones/desktop (PWA, works offline for the shell), and a **single self-contained HTML file** (`public/WikiSpeedruns.html`).
-- Light/dark themes, keyboard shortcuts (<kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>Backspace</kbd> = back).
+- Light/dark themes, keyboard shortcuts when Back is enabled (<kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>Backspace</kbd> = back).
 
 ## Why the SDOW *API* and not its data files
 

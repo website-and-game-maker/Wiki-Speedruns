@@ -19,7 +19,7 @@
     el.innerHTML = `
       <section class="hero">
         <h1>Race through Wikipedia.</h1>
-        <p>Get from one article to another using only the links inside them — as fast as you can.<span class="hide-sm"> Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</span></p>
+        <p>Get from one article to another using only the links inside them — as fast as you can.<span class="hero-more"> Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</span></p>
         <div class="row"><span class="pill pill-hot">📅 Daily Challenge #${U.dailyNumber(today)}</span>${streak ? `<span class="pill pill-warn">🔥 ${streak}-day streak</span>` : ''}<span class="pill" id="players"></span></div>
         <div class="daily" id="daily-cards">${C.pageCardSkeleton('Start')}<div class="arrow">→</div>${C.pageCardSkeleton('Target', true)}</div>
         <div class="row" id="daily-actions">
@@ -34,7 +34,7 @@
         </div>
       </section>
 
-      <h2 class="section-title" style="margin-top:28px">More ways to play</h2>
+      <h2 class="section-title more">More ways to play</h2>
       <div class="grid grid-3">
         <div class="card mode-card"><div class="emoji">🎲</div><h3>Random</h3><p>Two well-known articles from different corners of Wikipedia.</p><a class="btn btn-primary" href="#/play?mode=random">Play random</a></div>
         <div class="card mode-card"><div class="emoji">🌀</div><h3>Chaos mode</h3><p>Truly random articles. Obscure villages, forgotten footballers, 18th-century ships. Good luck.</p><button class="btn" id="chaos">Roll the dice</button></div>
@@ -416,24 +416,25 @@
     });
   };
 
+  const TOGGLES = [
+    ['showPar', 'Show par before starting', 'The optimal number of clicks, from Six Degrees'],
+    ['hideRefs', 'Hide citation numbers', 'Cleaner articles, fewer misclicks'],
+    ['allowBack', 'Allow the Back button during runs', 'Off = classic no-takebacks rules. Never available on ranked daily runs.'],
+    ['allowFind', 'Allow searching articles (Ctrl+F / Cmd+F)', 'Off = no searching for the target (blocked where the browser allows it). Never available on ranked daily runs.'],
+  ];
+
   function drawSettings(box) {
     const s = WS.store.settings();
     box.innerHTML = `<h2>Settings</h2>
       <div class="row" style="justify-content:space-between;margin-bottom:12px"><span>Theme</span>
         <div class="seg">${['auto', 'light', 'dark'].map((t) => `<button data-theme="${t}" class="${s.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Show par before starting<br><span class="muted tiny">The optimal number of clicks, from Six Degrees</span></span><input type="checkbox" id="par" ${s.showPar ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Allow the Back button during runs<br><span class="muted tiny">Off matches the classic no-takebacks rule. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-back" ${s.allowBack ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between"><span>Allow searching articles (Ctrl+F / Cmd+F)<br><span class="muted tiny">Off by default — no searching for the target. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-find" ${s.allowFind ? 'checked' : ''}></label>`;
+      ${TOGGLES.map(([key, label, help]) => `<label class="row setting"><span>${label}<br><span class="muted tiny">${help}</span></span><input type="checkbox" data-setting="${key}" ${s[key] ? 'checked' : ''}></label>`).join('')}`;
     U.$$('[data-theme]', box).forEach((b) => (b.onclick = () => {
       WS.store.setSetting('theme', b.dataset.theme);
       WS.app.applyTheme();
       drawSettings(box);
     }));
-    U.$('#par', box).onchange = (e) => WS.store.setSetting('showPar', e.target.checked);
-    U.$('#refs', box).onchange = (e) => WS.store.setSetting('hideRefs', e.target.checked);
-    U.$('#allow-back', box).onchange = (e) => WS.store.setSetting('allowBack', e.target.checked);
-    U.$('#allow-find', box).onchange = (e) => WS.store.setSetting('allowFind', e.target.checked);
+    U.$$('[data-setting]', box).forEach((i) => (i.onchange = (e) => WS.store.setSetting(i.dataset.setting, e.target.checked)));
   }
 
   // ======================================================================
@@ -448,10 +449,10 @@
         <li>You get a <b>start</b> article and a <b>target</b> article.</li>
         <li>Click links inside the article to move between pages. No search bar, no URL hacking.</li>
         <li>Reach the target in as little time — and as few clicks — as you can.</li>
-        <li>By default it's <b>no takebacks and no searching</b> — the classic Six Degrees rule. Once you click a link, that's your route, and Ctrl+F/Cmd+F is blocked. The timer pauses while pages load.</li>
-        <li>You can turn on the <b>Back</b> button and/or in-article <b>searching</b> for yourself in <a href="#/account">Settings</a> — but a run using either won't count for the ranked daily leaderboard, same as using a hint.</li>
+        <li>By default it's <b>no takebacks and no searching</b> — the classic rule. Once you click a link, that's your route, and Ctrl+F / Cmd+F is blocked (best effort: browser menus can't be blocked). The timer pauses while pages load.</li>
+        <li>You can turn on the <b>Back</b> button and/or <b>searching</b> for yourself in <a href="#/account">Settings</a>. They're never available on ranked daily runs, and if you use them elsewhere it's clearly flagged on your results page.</li>
       </ol>
-      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back, and searching are all disabled on ranked runs by default — turning any of them on for a run takes it out of ranked contention.</p>
+      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back and searching are all unavailable on ranked runs.</p>
       <p>Shortcuts (when Back is enabled in Settings): <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
 
       <h2>Six Degrees of Wikipedia inside</h2>

@@ -245,6 +245,10 @@ h1, h2, h3 { line-height: 1.2; }
 }
 .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 label.field { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.row.setting { flex-wrap: nowrap; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.row.setting:last-child { margin-bottom: 0; }
+.row.setting > span { flex: 1; min-width: 0; }
+.row.setting input { flex: 0 0 auto; }
 .seg {
   display: inline-flex;
   background: var(--surface-2);
@@ -277,6 +281,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
 .grid { display: grid; gap: 16px; }
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.section-title.more { margin-top: 28px; }
 .section-title { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 0 0 10px; }
 .pill {
   display: inline-flex;
@@ -365,13 +370,15 @@ main { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
   .hero { padding: 22px 16px; border-radius: 18px; }
   .hero h1 { font-size: 1.85rem; }
   .hero p { font-size: 0.98rem; margin-bottom: 14px; }
-  .daily { gap: 2px; margin: 14px 0 16px; }
-  .daily .arrow { font-size: 1.15rem; line-height: 1; }
-  .daily .page-card { padding: 10px; }
-  .daily .page-card .thumb { width: 48px; height: 48px; }
-  .daily .page-card .desc { display: none; }
+  .hero .hero-more { display: none; }
+  #daily-cards { gap: 2px; margin: 14px 0 16px; }
+  #daily-cards .arrow { font-size: 1.15rem; line-height: 1; }
+  #daily-cards .page-card { padding: 10px; }
+  #daily-cards .page-card .thumb { width: 48px; height: 48px; }
+  #daily-cards .page-card .desc { display: none; }
   #daily-actions .btn-lg { flex: 1 1 100%; }
-  .section-title { margin-top: 22px !important; }
+  .section-title.more { margin-top: 22px; }
+  .grid-3 { grid-template-columns: 1fr; }
   .mode-card {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -429,14 +436,6 @@ body.in-game main { max-width: none; padding: 0; }
   -webkit-backdrop-filter: saturate(1.4) blur(12px);
   border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   box-shadow: var(--shadow-lg);
-  animation: hud-float 7s ease-in-out infinite;
-}
-@keyframes hud-float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-3px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hud { animation: none; }
 }
 .hud-main {
   display: flex;
@@ -490,7 +489,8 @@ body.in-game main { max-width: none; padding: 0; }
   .hide-sm { display: none; }
 }
 
-.article-wrap { max-width: 980px; margin: 0 auto; padding: 18px 18px calc(190px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-x: clip; }
+.article-wrap { max-width: 980px; margin: 0 auto; padding: 18px 18px calc(var(--hud-clear, 120px) + 64px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-x: clip; }
+html { scroll-padding-bottom: var(--hud-clear, 0px); }
 .article-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 6px 0 4px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 .redirect-note { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
 
@@ -498,7 +498,7 @@ body.in-game main { max-width: none; padding: 0; }
   position: fixed;
   z-index: 45;
   right: 16px;
-  bottom: calc(132px + env(safe-area-inset-bottom));
+  bottom: calc(var(--hud-clear, 120px) + env(safe-area-inset-bottom));
   max-width: 340px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -658,6 +658,7 @@ body.in-game main { max-width: none; padding: 0; }
 .modal-backdrop.show .modal { transform: none; }
 .modal h2 { margin: 0 0 6px; font-family: var(--serif); }
 .modal-x { position: absolute; top: 10px; right: 10px; }
+body.in-game #toast-root { bottom: calc(var(--hud-clear, 120px) + env(safe-area-inset-bottom)); }
 #toast-root { position: fixed; z-index: 200; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: grid; gap: 8px; pointer-events: none; width: max-content; max-width: calc(100vw - 32px); }
 .toast { background: #1b1f27; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow-lg); font-weight: 600; font-size: 0.92rem; opacity: 0; transform: translateY(8px); transition: all 0.25s; }
 .toast.show { opacity: 1; transform: none; }
@@ -2607,21 +2608,30 @@ window.WS_FIREBASE_CONFIG = null;
           ${mode !== 'daily' ? '<button class="btn" id="swap">⇄ Swap</button>' : ''}
           <button class="btn btn-ghost" id="share">🔗 Challenge a friend</button>
         </div>
-        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. ${settings.allowBack ? '<b>Back</b> is on — it costs a click and takes this run out of ranked contention.' : 'No takebacks — once you click, that\'s it.'} ${settings.allowFind ? 'Searching (Ctrl+F) is on — it also takes this run out of ranked contention.' : 'No searching — Ctrl+F is blocked.'} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a></p>
+        <p class="muted tiny" id="rules" style="margin:16px 0 0"></p>
       </div>`;
 
     const $ = (s) => U.$(s, el);
     const ctrl = new AbortController();
 
-    // Ranked?
     let ranked = false;
+    const drawRules = () => {
+      const back = settings.allowBack ? (ranked ? 'Back is off on ranked runs.' : '<b>Back</b> is on (costs a click).') : 'No takebacks — once you click, that\'s it.';
+      const find = settings.allowFind ? (ranked ? 'Searching (Ctrl+F) is off on ranked runs.' : 'Searching (Ctrl+F) is on.') : 'No searching — Ctrl+F is blocked.';
+      $('#rules').innerHTML = `Rules: only click links inside the article. ${back} ${find} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a>`;
+    };
+    drawRules();
+
+    // Ranked?
     if (isDaily) {
       const local = WS.store.dailyAttempt(date);
       ranked = date === U.todayKey() && !local;
-      const setPill = () =>
-        ($('#rank-pill').innerHTML = ranked
+      const setPill = () => {
+        $('#rank-pill').innerHTML = ranked
           ? `<span class="pill pill-good">🏆 Ranked — first attempt counts</span>`
-          : `<span class="pill">Practice (unranked)</span>`);
+          : `<span class="pill">Practice (unranked)</span>`;
+        drawRules();
+      };
       setPill();
       WS.fb.ready.then(async (ok) => {
         if (!ok || !WS.fb.user || !ranked) return;
@@ -2663,7 +2673,7 @@ window.WS_FIREBASE_CONFIG = null;
 
     // Par (optimal clicks) in the background; shown only if the setting is on.
     const parPromise = WS.sdow.distance(start, target, { signal: ctrl.signal }).catch(() => null);
-    if (WS.store.settings().showPar) {
+    if (settings.showPar) {
       parPromise.then((d) => d && d.degrees != null && ($('#par-pill').innerHTML = `<span class="pill pill-warn" title="Shortest possible path, from Six Degrees of Wikipedia">⛳ Par ${d.degrees}</span>`));
     }
 
@@ -2721,9 +2731,11 @@ window.WS_FIREBASE_CONFIG = null;
       done: false,
       navToken: 0,
     };
-    const hideRefs = WS.store.settings().hideRefs;
-    const allowBack = WS.store.settings().allowBack;
-    const allowFind = WS.store.settings().allowFind;
+    const prefs = WS.store.settings();
+    const hideRefs = prefs.hideRefs;
+    // Assists are never available on ranked runs, so using one can't cost the day's ranked attempt.
+    const allowBack = prefs.allowBack && !cfg.ranked;
+    const allowFind = prefs.allowFind && !cfg.ranked;
 
     document.body.classList.add('in-game');
     WS.app.guard = () => s.done || confirm('Leave this run? It will not be saved.');
@@ -2762,7 +2774,7 @@ window.WS_FIREBASE_CONFIG = null;
       if (s.segStart == null && !s.done) s.segStart = now();
     };
     const tick = setInterval(() => ($('#timer').textContent = U.fmtTime(elapsed())), 100);
-    const backBtn = allowBack ? $('#back') : null;
+    const backBtn = $('#back');
 
     const drawCrumbs = () => {
       $('#clicks').textContent = s.clicks;
@@ -2861,17 +2873,23 @@ window.WS_FIREBASE_CONFIG = null;
         if (a) activate(a);
       }
     });
+    let findToastAt = -Infinity;
     const onKey = (e) => {
       if (e.target.matches && e.target.matches('input, textarea')) return;
       if (allowBack && ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey))) {
         e.preventDefault();
         back();
       }
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+      // Match physical keys so non-Latin layouts are covered; F3 / Ctrl+G are "find next".
+      const mod = (e.ctrlKey || e.metaKey) && !e.altKey;
+      if ((mod && (e.code === 'KeyF' || e.code === 'KeyG')) || e.code === 'F3') {
         if (!allowFind) {
           e.preventDefault();
-          U.toast('Searching is off — turn it on in Settings if you want it.');
-        } else {
+          if (now() - findToastAt > 2500) {
+            findToastAt = now();
+            U.toast(cfg.ranked ? 'Searching is off on ranked runs.' : 'Searching is off — you can enable it in Settings before a run.');
+          }
+        } else if (!e.repeat) {
           s.finds++;
         }
       }
@@ -2920,7 +2938,7 @@ window.WS_FIREBASE_CONFIG = null;
         if (s.done) return closeBox();
         s.hints++;
         if (d.degrees == null) {
-          box.innerHTML = `No path from <b>${esc(cur)}</b> to the target in the Six Degrees database. Go back!`;
+          box.innerHTML = `No path from <b>${esc(cur)}</b> to the target in the Six Degrees database.${allowBack ? ' Go back!' : ''}`;
         } else {
           const links = U.$$('a.ws-link', article).filter((a) => d.next.includes(a.dataset.title));
           links.forEach((a) => a.classList.add('ws-hint'));
@@ -2980,14 +2998,30 @@ window.WS_FIREBASE_CONFIG = null;
         });
       }
       if (won) C.confetti();
-      WS.app.go('run', { id: run.id, fresh: '1' });
+      WS.app.replaceRoute('run', { id: run.id, fresh: '1' });
     }
 
-    history.pushState({ wsRunTrap: s.id }, '', location.href);
+    // Browser Back can't be a free undo: park a same-URL entry ahead of us and step forward onto it
+    // whenever Back lands on the run's own URL. Hash navigation (nav links) still goes through WS.app.guard.
+    const runHash = location.hash;
+    history.pushState({ wsRun: s.id }, '', location.href);
+    let trapToastAt = -Infinity;
     const onPopState = () => {
-      if (!s.done) history.pushState({ wsRunTrap: s.id }, '', location.href);
+      if (s.done || location.hash !== runHash || (history.state && history.state.wsRun === s.id)) return;
+      history.forward();
+      if (now() - trapToastAt > 2500) {
+        trapToastAt = now();
+        U.toast(allowBack ? 'Browser Back is off during a run — use the in-game Back button.' : 'Browser Back is off during a run. Use ✕ to give up.');
+      }
     };
     window.addEventListener('popstate', onPopState);
+
+    // Keep the floating HUD's height available to CSS (toasts, hints, scroll padding).
+    const hudEl = $('.hud');
+    const syncHud = () => document.documentElement.style.setProperty('--hud-clear', hudEl.offsetHeight + 24 + 'px');
+    const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(syncHud) : null;
+    if (hudObserver) hudObserver.observe(hudEl);
+    syncHud();
 
     drawCrumbs();
     show(cfg.start);
@@ -2998,6 +3032,8 @@ window.WS_FIREBASE_CONFIG = null;
       document.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onUnload);
       window.removeEventListener('popstate', onPopState);
+      if (hudObserver) hudObserver.disconnect();
+      document.documentElement.style.removeProperty('--hud-clear');
       document.body.classList.remove('in-game');
       s.navToken++;
     });
@@ -3335,7 +3371,7 @@ window.WS_FIREBASE_CONFIG = null;
     el.innerHTML = `
       <section class="hero">
         <h1>Race through Wikipedia.</h1>
-        <p>Get from one article to another using only the links inside them — as fast as you can.<span class="hide-sm"> Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</span></p>
+        <p>Get from one article to another using only the links inside them — as fast as you can.<span class="hero-more"> Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</span></p>
         <div class="row"><span class="pill pill-hot">📅 Daily Challenge #${U.dailyNumber(today)}</span>${streak ? `<span class="pill pill-warn">🔥 ${streak}-day streak</span>` : ''}<span class="pill" id="players"></span></div>
         <div class="daily" id="daily-cards">${C.pageCardSkeleton('Start')}<div class="arrow">→</div>${C.pageCardSkeleton('Target', true)}</div>
         <div class="row" id="daily-actions">
@@ -3350,7 +3386,7 @@ window.WS_FIREBASE_CONFIG = null;
         </div>
       </section>
 
-      <h2 class="section-title" style="margin-top:28px">More ways to play</h2>
+      <h2 class="section-title more">More ways to play</h2>
       <div class="grid grid-3">
         <div class="card mode-card"><div class="emoji">🎲</div><h3>Random</h3><p>Two well-known articles from different corners of Wikipedia.</p><a class="btn btn-primary" href="#/play?mode=random">Play random</a></div>
         <div class="card mode-card"><div class="emoji">🌀</div><h3>Chaos mode</h3><p>Truly random articles. Obscure villages, forgotten footballers, 18th-century ships. Good luck.</p><button class="btn" id="chaos">Roll the dice</button></div>
@@ -3732,24 +3768,25 @@ window.WS_FIREBASE_CONFIG = null;
     });
   };
 
+  const TOGGLES = [
+    ['showPar', 'Show par before starting', 'The optimal number of clicks, from Six Degrees'],
+    ['hideRefs', 'Hide citation numbers', 'Cleaner articles, fewer misclicks'],
+    ['allowBack', 'Allow the Back button during runs', 'Off = classic no-takebacks rules. Never available on ranked daily runs.'],
+    ['allowFind', 'Allow searching articles (Ctrl+F / Cmd+F)', 'Off = no searching for the target (blocked where the browser allows it). Never available on ranked daily runs.'],
+  ];
+
   function drawSettings(box) {
     const s = WS.store.settings();
     box.innerHTML = `<h2>Settings</h2>
       <div class="row" style="justify-content:space-between;margin-bottom:12px"><span>Theme</span>
         <div class="seg">${['auto', 'light', 'dark'].map((t) => `<button data-theme="${t}" class="${s.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Show par before starting<br><span class="muted tiny">The optimal number of clicks, from Six Degrees</span></span><input type="checkbox" id="par" ${s.showPar ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Hide citation numbers<br><span class="muted tiny">Cleaner articles, fewer misclicks</span></span><input type="checkbox" id="refs" ${s.hideRefs ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between;margin-bottom:12px"><span>Allow the Back button during runs<br><span class="muted tiny">Off matches the classic no-takebacks rule. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-back" ${s.allowBack ? 'checked' : ''}></label>
-      <label class="row" style="justify-content:space-between"><span>Allow searching articles (Ctrl+F / Cmd+F)<br><span class="muted tiny">Off by default — no searching for the target. Turning this on also takes a run out of ranked leaderboard contention.</span></span><input type="checkbox" id="allow-find" ${s.allowFind ? 'checked' : ''}></label>`;
+      ${TOGGLES.map(([key, label, help]) => `<label class="row setting"><span>${label}<br><span class="muted tiny">${help}</span></span><input type="checkbox" data-setting="${key}" ${s[key] ? 'checked' : ''}></label>`).join('')}`;
     U.$$('[data-theme]', box).forEach((b) => (b.onclick = () => {
       WS.store.setSetting('theme', b.dataset.theme);
       WS.app.applyTheme();
       drawSettings(box);
     }));
-    U.$('#par', box).onchange = (e) => WS.store.setSetting('showPar', e.target.checked);
-    U.$('#refs', box).onchange = (e) => WS.store.setSetting('hideRefs', e.target.checked);
-    U.$('#allow-back', box).onchange = (e) => WS.store.setSetting('allowBack', e.target.checked);
-    U.$('#allow-find', box).onchange = (e) => WS.store.setSetting('allowFind', e.target.checked);
+    U.$$('[data-setting]', box).forEach((i) => (i.onchange = (e) => WS.store.setSetting(i.dataset.setting, e.target.checked)));
   }
 
   // ======================================================================
@@ -3764,10 +3801,10 @@ window.WS_FIREBASE_CONFIG = null;
         <li>You get a <b>start</b> article and a <b>target</b> article.</li>
         <li>Click links inside the article to move between pages. No search bar, no URL hacking.</li>
         <li>Reach the target in as little time — and as few clicks — as you can.</li>
-        <li>By default it's <b>no takebacks and no searching</b> — the classic Six Degrees rule. Once you click a link, that's your route, and Ctrl+F/Cmd+F is blocked. The timer pauses while pages load.</li>
-        <li>You can turn on the <b>Back</b> button and/or in-article <b>searching</b> for yourself in <a href="#/account">Settings</a> — but a run using either won't count for the ranked daily leaderboard, same as using a hint.</li>
+        <li>By default it's <b>no takebacks and no searching</b> — the classic rule. Once you click a link, that's your route, and Ctrl+F / Cmd+F is blocked (best effort: browser menus can't be blocked). The timer pauses while pages load.</li>
+        <li>You can turn on the <b>Back</b> button and/or <b>searching</b> for yourself in <a href="#/account">Settings</a>. They're never available on ranked daily runs, and if you use them elsewhere it's clearly flagged on your results page.</li>
       </ol>
-      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back, and searching are all disabled on ranked runs by default — turning any of them on for a run takes it out of ranked contention.</p>
+      <p>The <b>Daily Challenge</b> is the same pair for everyone and resets at 00:00 UTC. Your first attempt counts for the leaderboard; after that it's practice. Hints, Back and searching are all unavailable on ranked runs.</p>
       <p>Shortcuts (when Back is enabled in Settings): <kbd>Alt</kbd>+<kbd>←</kbd> or <kbd>Backspace</kbd> to go back.</p>
 
       <h2>Six Degrees of Wikipedia inside</h2>
