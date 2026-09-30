@@ -43,21 +43,30 @@
           ${mode !== 'daily' ? '<button class="btn" id="swap">⇄ Swap</button>' : ''}
           <button class="btn btn-ghost" id="share">🔗 Challenge a friend</button>
         </div>
-        <p class="muted tiny" style="margin:16px 0 0">Rules: only click links inside the article. ${settings.allowBack ? '<b>Back</b> is on — it costs a click and takes this run out of ranked contention.' : 'No takebacks — once you click, that\'s it.'} ${settings.allowFind ? 'Searching (Ctrl+F) is on — it also takes this run out of ranked contention.' : 'No searching — Ctrl+F is blocked.'} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a></p>
+        <p class="muted tiny" id="rules" style="margin:16px 0 0"></p>
       </div>`;
 
     const $ = (s) => U.$(s, el);
     const ctrl = new AbortController();
 
-    // Ranked?
     let ranked = false;
+    const drawRules = () => {
+      const back = settings.allowBack ? (ranked ? 'Back is off on ranked runs.' : '<b>Back</b> is on (costs a click).') : 'No takebacks — once you click, that\'s it.';
+      const find = settings.allowFind ? (ranked ? 'Searching (Ctrl+F) is off on ranked runs.' : 'Searching (Ctrl+F) is on.') : 'No searching — Ctrl+F is blocked.';
+      $('#rules').innerHTML = `Rules: only click links inside the article. ${back} ${find} The timer pauses while pages load, so slow internet doesn't hurt you. <a href="#/account">Change in Settings</a>`;
+    };
+    drawRules();
+
+    // Ranked?
     if (isDaily) {
       const local = WS.store.dailyAttempt(date);
       ranked = date === U.todayKey() && !local;
-      const setPill = () =>
-        ($('#rank-pill').innerHTML = ranked
+      const setPill = () => {
+        $('#rank-pill').innerHTML = ranked
           ? `<span class="pill pill-good">🏆 Ranked — first attempt counts</span>`
-          : `<span class="pill">Practice (unranked)</span>`);
+          : `<span class="pill">Practice (unranked)</span>`;
+        drawRules();
+      };
       setPill();
       WS.fb.ready.then(async (ok) => {
         if (!ok || !WS.fb.user || !ranked) return;
@@ -99,7 +108,7 @@
 
     // Par (optimal clicks) in the background; shown only if the setting is on.
     const parPromise = WS.sdow.distance(start, target, { signal: ctrl.signal }).catch(() => null);
-    if (WS.store.settings().showPar) {
+    if (settings.showPar) {
       parPromise.then((d) => d && d.degrees != null && ($('#par-pill').innerHTML = `<span class="pill pill-warn" title="Shortest possible path, from Six Degrees of Wikipedia">⛳ Par ${d.degrees}</span>`));
     }
 
@@ -157,9 +166,11 @@
       done: false,
       navToken: 0,
     };
-    const hideRefs = WS.store.settings().hideRefs;
-    const allowBack = WS.store.settings().allowBack;
-    const allowFind = WS.store.settings().allowFind;
+    const prefs = WS.store.settings();
+    const hideRefs = prefs.hideRefs;
+    // Assists are never available on ranked runs, so using one can't cost the day's ranked attempt.
+    const allowBack = prefs.allowBack && !cfg.ranked;
+    const allowFind = prefs.allowFind && !cfg.ranked;
 
     document.body.classList.add('in-game');
     WS.app.guard = () => s.done || confirm('Leave this run? It will not be saved.');
@@ -198,7 +209,7 @@
       if (s.segStart == null && !s.done) s.segStart = now();
     };
     const tick = setInterval(() => ($('#timer').textContent = U.fmtTime(elapsed())), 100);
-    const backBtn = allowBack ? $('#back') : null;
+    const backBtn = $('#back');
 
     const drawCrumbs = () => {
       $('#clicks').textContent = s.clicks;
@@ -297,17 +308,23 @@
         if (a) activate(a);
       }
     });
+    let findToastAt = -Infinity;
     const onKey = (e) => {
       if (e.target.matches && e.target.matches('input, textarea')) return;
       if (allowBack && ((e.altKey && e.key === 'ArrowLeft') || (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey))) {
         e.preventDefault();
         back();
       }
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+      // Match physical keys so non-Latin layouts are covered; F3 / Ctrl+G are "find next".
+      const mod = (e.ctrlKey || e.metaKey) && !e.altKey;
+      if ((mod && (e.code === 'KeyF' || e.code === 'KeyG')) || e.code === 'F3') {
         if (!allowFind) {
           e.preventDefault();
-          U.toast('Searching is off — turn it on in Settings if you want it.');
-        } else {
+          if (now() - findToastAt > 2500) {
+            findToastAt = now();
+            U.toast(cfg.ranked ? 'Searching is off on ranked runs.' : 'Searching is off — you can enable it in Settings before a run.');
+          }
+        } else if (!e.repeat) {
           s.finds++;
         }
       }
@@ -356,7 +373,7 @@
         if (s.done) return closeBox();
         s.hints++;
         if (d.degrees == null) {
-          box.innerHTML = `No path from <b>${esc(cur)}</b> to the target in the Six Degrees database. Go back!`;
+          box.innerHTML = `No path from <b>${esc(cur)}</b> to the target in the Six Degrees database.${allowBack ? ' Go back!' : ''}`;
         } else {
           const links = U.$$('a.ws-link', article).filter((a) => d.next.includes(a.dataset.title));
           links.forEach((a) => a.classList.add('ws-hint'));
@@ -416,14 +433,30 @@
         });
       }
       if (won) C.confetti();
-      WS.app.go('run', { id: run.id, fresh: '1' });
+      WS.app.replaceRoute('run', { id: run.id, fresh: '1' });
     }
 
-    history.pushState({ wsRunTrap: s.id }, '', location.href);
+    // Browser Back can't be a free undo: park a same-URL entry ahead of us and step forward onto it
+    // whenever Back lands on the run's own URL. Hash navigation (nav links) still goes through WS.app.guard.
+    const runHash = location.hash;
+    history.pushState({ wsRun: s.id }, '', location.href);
+    let trapToastAt = -Infinity;
     const onPopState = () => {
-      if (!s.done) history.pushState({ wsRunTrap: s.id }, '', location.href);
+      if (s.done || location.hash !== runHash || (history.state && history.state.wsRun === s.id)) return;
+      history.forward();
+      if (now() - trapToastAt > 2500) {
+        trapToastAt = now();
+        U.toast(allowBack ? 'Browser Back is off during a run — use the in-game Back button.' : 'Browser Back is off during a run. Use ✕ to give up.');
+      }
     };
     window.addEventListener('popstate', onPopState);
+
+    // Keep the floating HUD's height available to CSS (toasts, hints, scroll padding).
+    const hudEl = $('.hud');
+    const syncHud = () => document.documentElement.style.setProperty('--hud-clear', hudEl.offsetHeight + 24 + 'px');
+    const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(syncHud) : null;
+    if (hudObserver) hudObserver.observe(hudEl);
+    syncHud();
 
     drawCrumbs();
     show(cfg.start);
@@ -434,6 +467,8 @@
       document.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onUnload);
       window.removeEventListener('popstate', onPopState);
+      if (hudObserver) hudObserver.disconnect();
+      document.documentElement.style.removeProperty('--hud-clear');
       document.body.classList.remove('in-game');
       s.navToken++;
     });
