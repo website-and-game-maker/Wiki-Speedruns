@@ -19,7 +19,7 @@
     el.innerHTML = `
       <section class="hero">
         <h1>Race through Wikipedia.</h1>
-        <p>Get from one article to another using only the links inside them — as fast as you can. Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</p>
+        <p>Get from one article to another using only the links inside them — as fast as you can.<span class="hide-sm"> Then see how your route stacks up against every shortest path, courtesy of <b>Six Degrees of Wikipedia</b>.</span></p>
         <div class="row"><span class="pill pill-hot">📅 Daily Challenge #${U.dailyNumber(today)}</span>${streak ? `<span class="pill pill-warn">🔥 ${streak}-day streak</span>` : ''}<span class="pill" id="players"></span></div>
         <div class="daily" id="daily-cards">${C.pageCardSkeleton('Start')}<div class="arrow">→</div>${C.pageCardSkeleton('Target', true)}</div>
         <div class="row" id="daily-actions">
