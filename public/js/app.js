@@ -1,4 +1,4 @@
-/* App shell: hash router, top/bottom nav, account button, theme, service worker. */
+/* App shell: hash router, top nav, account button, theme, service worker. */
 (function (root) {
   const WS = (root.WS = root.WS || {});
   const U = WS.util;
@@ -126,7 +126,6 @@
     drawAccount();
     WS.fb.onChange(drawAccount);
     WS.fb.ready.then(drawAccount);
-    document.body.classList.add('has-bottom-nav');
     lastHash = location.hash;
     render();
 
