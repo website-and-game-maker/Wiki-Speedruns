@@ -1,6 +1,7 @@
-/* Offline shell: app files are served stale-while-revalidate. Wikipedia / Six Degrees / Firebase
- * requests always go to the network. Bump VERSION to force-refresh caches. */
-const VERSION = 'ws-v1';
+/* Offline shell: app files are fetched network-first (so a new deploy shows up on the next load) and
+ * cached for offline use. Wikipedia / Six Degrees / Firebase requests always go to the network.
+ * Bump VERSION to force-refresh caches. */
+const VERSION = 'ws-v2';
 const SHELL = [
   './',
   'index.html',
@@ -38,14 +39,15 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.open(VERSION).then(async (cache) => {
       const key = e.request.mode === 'navigate' ? 'index.html' : e.request;
-      const cached = await cache.match(key);
-      const network = fetch(e.request)
-        .then((res) => {
-          if (res.ok && res.type === 'basic') cache.put(key, res.clone());
-          return res;
-        })
-        .catch(() => cached);
-      return cached || network;
+      try {
+        const res = await fetch(e.request, { cache: 'no-cache' });
+        if (res.ok && res.type === 'basic') cache.put(key, res.clone());
+        return res;
+      } catch (err) {
+        const cached = await cache.match(key);
+        if (cached) return cached;
+        throw err;
+      }
     })
   );
 });
